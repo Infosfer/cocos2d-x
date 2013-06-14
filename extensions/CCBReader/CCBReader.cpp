@@ -540,6 +540,28 @@ std::string CCBReader::readCachedString() {
     return this->mStringCache[n];
 }
 
+void CCBReader::fixEmptySpritesForBatching(CCNode* root, CCTexture2D* texture) {
+	if (dynamic_cast<CCSprite*>(root)) {
+		CCSprite* s = (CCSprite*)root;
+		if (!s->getTexture()) {
+			s->setTexture(texture);
+			CCRect r = CCRectMake(0,0,0,0);
+			s->setTextureRect(r, false, r.size);
+		}
+	}
+
+	CCObject* obj;
+	CCNode* n;
+	CCARRAY_FOREACH(root->getChildren(), obj) {
+		n = (CCNode*)obj;
+		fixEmptySpritesForBatching(n, texture);
+	}
+}
+
+void CCBReader::fixEmptySpritesForBatching(CCNode* root, char* textureName) {
+	fixEmptySpritesForBatching(root, CCTextureCache::sharedTextureCache()->textureForKey(textureName));
+}
+
 CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
     /* Read class name. */
     std::string className = this->readCachedString();
@@ -556,7 +578,11 @@ CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
     if(memberVarAssignmentType != kCCBTargetTypeNone) {
         memberVarAssignmentName = this->readCachedString();
     }
-    
+
+	if (strcmp(className.c_str(), "CCNode") == 0) {
+		className = "CCSprite";
+	}
+
     CCNodeLoader *ccNodeLoader = this->mCCNodeLoaderLibrary->getCCNodeLoader(className.c_str());
      
     if (! ccNodeLoader)

@@ -217,6 +217,9 @@ public:
     
     CCNode* readNodeGraphFromData(CCData *pData, CCObject *pOwner, const CCSize &parentSize);
    
+	void    fixEmptySpritesForBatching(CCNode* root, CCTexture2D* texture);
+	void    fixEmptySpritesForBatching(CCNode* root, char* textureName);
+
     CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName);
     CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner);
     CCScene* createSceneWithNodeGraphFromFile(const char *pCCBFileName, CCObject *pOwner, const CCSize &parentSize);
