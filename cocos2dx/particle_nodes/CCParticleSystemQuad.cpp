@@ -212,12 +212,13 @@ void CCParticleSystemQuad::setTexture(CCTexture2D* texture)
 void CCParticleSystemQuad::setDisplayFrame(CCSpriteFrame *spriteFrame)
 {
     CCAssert(spriteFrame->getOffsetInPixels().equals(CCPointZero), 
-             "QuadParticle only supports SpriteFrames with no offsets");
+		"QuadParticle only supports SpriteFrames with no offsets");
 
     // update texture before updating texture rect
     if ( !m_pTexture || spriteFrame->getTexture()->getName() != m_pTexture->getName())
     {
-        this->setTexture(spriteFrame->getTexture());
+        //this->setTexture(spriteFrame->getTexture());
+		this->setTextureWithRect(spriteFrame->getTexture(), spriteFrame->getRect());
     }
 }
 
