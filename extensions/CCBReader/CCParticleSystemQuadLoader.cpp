@@ -136,7 +136,6 @@ void CCParticleSystemQuadLoader::onHandlePropTypeTexture(CCNode * pNode, CCNode 
 void CCParticleSystemQuadLoader::onHandlePropTypeSpriteFrame(CCNode * pNode, CCNode * pParent, const char * pPropertyName, CCSpriteFrame * pCCSpriteFrame, CCBReader * pCCBReader) {
     if(strcmp(pPropertyName, PROPERTY_TEXTURE) == 0) {
         ((CCParticleSystemQuad *)pNode)->setDisplayFrame(pCCSpriteFrame);
-        ((CCParticleSystemQuad *)pNode)->getTexture()->setAntiAliasTexParameters();
     }
     else {
         CCNodeLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pCCSpriteFrame, pCCBReader);
