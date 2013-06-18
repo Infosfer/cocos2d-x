@@ -956,7 +956,7 @@ void CCNodeLoader::onHandlePropTypePoint(CCNode * pNode, CCNode * pParent, const
     if(strcmp(pPropertyName, PROPERTY_ANCHORPOINT) == 0) {
         pNode->setAnchorPoint(pPoint);
     } else {
-        ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
+        //ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
     }
 }
 
