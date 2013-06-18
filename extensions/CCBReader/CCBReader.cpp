@@ -540,26 +540,25 @@ std::string CCBReader::readCachedString() {
     return this->mStringCache[n];
 }
 
-void CCBReader::fixEmptySpritesForBatching(CCNode* root, CCTexture2D* texture) {
+void CCBReader::fixEmptySpritesForBatchingWithTexture(CCNode* root, CCTexture2D* texture) {
+	static CCRect r = CCRectMake(0,0,0,0);
+
 	if (dynamic_cast<CCSprite*>(root)) {
 		CCSprite* s = (CCSprite*)root;
 		if (!s->getTexture()) {
 			s->setTexture(texture);
-			CCRect r = CCRectMake(0,0,0,0);
 			s->setTextureRect(r, false, r.size);
 		}
 	}
 
 	CCObject* obj;
-	CCNode* n;
 	CCARRAY_FOREACH(root->getChildren(), obj) {
-		n = (CCNode*)obj;
-		fixEmptySpritesForBatching(n, texture);
+		fixEmptySpritesForBatchingWithTexture((CCNode*)obj, texture);
 	}
 }
 
-void CCBReader::fixEmptySpritesForBatching(CCNode* root, char* textureName) {
-	fixEmptySpritesForBatching(root, CCTextureCache::sharedTextureCache()->textureForKey(textureName));
+void CCBReader::fixEmptySpritesForBatchingWithTextureName(CCNode* root, char* textureName) {
+	fixEmptySpritesForBatchingWithTexture(root, CCTextureCache::sharedTextureCache()->textureForKey(textureName));
 }
 
 CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
