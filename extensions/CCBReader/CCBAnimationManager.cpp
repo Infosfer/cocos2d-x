@@ -737,8 +737,8 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
 {
     CCAssert(nSeqId != -1, "Sequence id couldn't be found");
     
-    mRootNode->stopAllActions();
-    
+	mRootNode->getChildByTag(1000)->stopAllActions();    
+
     CCDictElement* pElement = NULL;
     CCDICT_FOREACH(mNodeSequences, pElement)
     {
@@ -786,25 +786,27 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
         }
     }
     
+	CCNode* n = mRootNode->getChildByTag(1000);
+
     // Make callback at end of sequence
     CCBSequence *seq = getSequence(nSeqId);
     CCAction *completeAction = CCSequence::createWithTwoActions(CCDelayTime::create(seq->getDuration() + fTweenDuration),
                                                                 CCCallFunc::create(this, callfunc_selector(CCBAnimationManager::sequenceCompleted)));
-    mRootNode->runAction(completeAction);
+	n->runAction(completeAction);
     
     // Set the running scene
 
     if(seq->getCallbackChannel() != NULL) {
         CCAction* action = (CCAction *)actionForCallbackChannel(seq->getCallbackChannel());
         if(action != NULL) {
-            mRootNode->runAction(action);
+            n->runAction(action);
         }
     } 
 
     if(seq->getSoundChannel() != NULL) {
         CCAction* action = (CCAction *)actionForSoundChannel(seq->getSoundChannel());
         if(action != NULL) {
-            mRootNode->runAction(action);
+            n->runAction(action);
         }
     }
 

@@ -903,6 +903,10 @@ CCNode * CCNodeLoader::parsePropTypeCCBFile(CCNode * pNode, CCNode * pParent, CC
     
     CCNode * ccbFileNode = ccbReader->readFileWithCleanUp(false, pCCBReader->getAnimationManagers());
     
+	CCNode* seqCompletedActionTarget  = CCNode::create();
+	seqCompletedActionTarget->setTag(1000);
+	ccbFileNode->addChild(seqCompletedActionTarget);
+
     if (ccbFileNode && ccbReader->getAnimationManager()->getAutoPlaySequenceId() != -1)
     {
         // Auto play animations

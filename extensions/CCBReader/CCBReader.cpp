@@ -592,6 +592,10 @@ CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
 
     CCNode *node = ccNodeLoader->loadCCNode(pParent, this);
 
+	CCNode* seqCompletedActionTarget  = CCNode::create();
+	seqCompletedActionTarget->setTag(1000);
+	node->addChild(seqCompletedActionTarget);
+
     // Set root node
     if (! mActionManager->getRootNode())
     {
