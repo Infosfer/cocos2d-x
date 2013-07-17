@@ -13,12 +13,3 @@
 [submodule "tools/cocos2d-console"]
 	path = tools/cocos2d-console
 	url = https://github.com/cocos2d/cocos2d-console.git
-[submodule "projects/Game3"]
-	path = projects/Game3
-	url = ssh://infosfer@infosfer.kilnhg.com/JSquared/JSquared---Games/Game3
-[submodule "projects/ccbTextureSheetFixer"]
-	path = projects/ccbTextureSheetFixer
-	url = https://infosfer.kilnhg.com/Code/Infosfer/Infosfer/ccbTextureSheetFixer.git
-[submodule "projects/Common"]
-	path = projects/Common
-	url = ssh://infosfer@infosfer.kilnhg.com/Infosfer/Infosfer/Common
