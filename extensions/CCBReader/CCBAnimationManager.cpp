@@ -865,14 +865,14 @@ void CCBAnimationManager::sequenceCompleted()
         mDelegate->completedAnimationSequenceNamed(runningSequenceName);
     }
     
-    if (mTarget && mAnimationCompleteCallbackFunc) {
-        (mTarget->*mAnimationCompleteCallbackFunc)();
-    }
-    
     if (nextSeqId != -1)
     {
         runAnimationsForSequenceIdTweenDuration(nextSeqId, 0);
     }
+
+	if (mTarget && mAnimationCompleteCallbackFunc) {
+		(mTarget->*mAnimationCompleteCallbackFunc)();
+	}
 }
 
 // Custom actions
