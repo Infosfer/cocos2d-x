@@ -356,6 +356,10 @@ CCNode* CCBReader::readFileWithCleanUp(bool bCleanUp, CCDictionary* am)
 
     CCNode *pNode = readNodeGraph(NULL);
 
+	CCSprite* seqCompletedActionTarget  = CCSprite::create();
+	seqCompletedActionTarget->setTag(1000);
+	pNode->addChild(seqCompletedActionTarget);
+
     mActionManagers->setObject(mActionManager, intptr_t(pNode));
 
     if (bCleanUp)
@@ -591,10 +595,6 @@ CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
     }
 
     CCNode *node = ccNodeLoader->loadCCNode(pParent, this);
-
-	CCSprite* seqCompletedActionTarget  = CCSprite::create();
-	seqCompletedActionTarget->setTag(1000);
-	node->addChild(seqCompletedActionTarget);
 
     // Set root node
     if (! mActionManager->getRootNode())
