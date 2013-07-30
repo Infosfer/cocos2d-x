@@ -592,7 +592,7 @@ CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
 
     CCNode *node = ccNodeLoader->loadCCNode(pParent, this);
 
-	CCNode* seqCompletedActionTarget  = CCNode::create();
+	CCSprite* seqCompletedActionTarget  = CCSprite::create();
 	seqCompletedActionTarget->setTag(1000);
 	node->addChild(seqCompletedActionTarget);
 
