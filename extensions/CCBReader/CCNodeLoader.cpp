@@ -903,7 +903,7 @@ CCNode * CCNodeLoader::parsePropTypeCCBFile(CCNode * pNode, CCNode * pParent, CC
     
     CCNode * ccbFileNode = ccbReader->readFileWithCleanUp(false, pCCBReader->getAnimationManagers());
     
-	CCNode* seqCompletedActionTarget  = CCNode::create();
+	CCSprite* seqCompletedActionTarget  = CCSprite::create();
 	seqCompletedActionTarget->setTag(1000);
 	ccbFileNode->addChild(seqCompletedActionTarget);
 
