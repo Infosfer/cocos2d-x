@@ -28,8 +28,10 @@ THE SOFTWARE.
 #ifdef __cplusplus
 extern "C" {
 #endif    
-    
-namespace cocos2d {
+
+#include "platform/CCPlatformMacros.h"
+
+NS_CC_BEGIN
 
 /** @file
  base64 helper functions
@@ -43,7 +45,7 @@ namespace cocos2d {
  *
  @since v0.8.1
  */
-int base64Decode(const unsigned char *in, unsigned int inLength, unsigned char **out);
+CC_DLL int base64Decode(const unsigned char *in, unsigned int inLength, unsigned char **out);
     
 /**
  * Encodes bytes into a 64base encoded memory with terminating '\0' character. 
@@ -53,9 +55,9 @@ int base64Decode(const unsigned char *in, unsigned int inLength, unsigned char *
  *
  @since v2.1.4
  */
-int base64Encode(const unsigned char *in, unsigned int inLength, char **out);
+CC_DLL int base64Encode(const unsigned char *in, unsigned int inLength, char **out);
 
-}//namespace   cocos2d 
+NS_CC_END
 
 #ifdef __cplusplus
 }
