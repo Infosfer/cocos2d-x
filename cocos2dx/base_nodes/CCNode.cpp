@@ -1297,6 +1297,28 @@ void CCNode::removeAllComponents()
     m_pComponentContainer->removeAll();
 }
 
+void CCNode::setInstanceName(std::string instanceName) {
+	m_instanceName = instanceName;
+}
+
+std::string CCNode::getInstanceName() {
+	return m_instanceName;
+}
+
+CCNode* CCNode::getChildByInstanceName(std::string instanceName) {
+    if(m_pChildren && m_pChildren->count() > 0)
+    {
+        CCObject* child;
+        CCARRAY_FOREACH(m_pChildren, child)
+        {
+            CCNode* pNode = (CCNode*) child;
+			if(pNode && pNode->getInstanceName() == instanceName)
+                return pNode;
+        }
+    }
+    return NULL;
+}
+
 // CCNodeRGBA
 CCNodeRGBA::CCNodeRGBA()
 : _displayedOpacity(255)

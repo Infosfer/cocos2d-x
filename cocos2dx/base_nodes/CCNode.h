@@ -1327,6 +1327,14 @@ public:
     virtual void removeAllComponents();
     /// @} end of component functions
 
+	/**
+     *   Instance name getter setter methods
+     */
+	void setInstanceName(std::string instanceName);
+	std::string getInstanceName();
+
+	CCNode *getChildByInstanceName(std::string instanceName);
+
 private:
     /// lazy allocs
     void childrenAlloc(void);
@@ -1405,6 +1413,8 @@ protected:
     ccScriptType m_eScriptType;         ///< type of script binding, lua or javascript
     
     CCComponentContainer *m_pComponentContainer;        ///< Dictionary of components
+
+	std::string m_instanceName;		// Instance name
 
 };
 
