@@ -14,6 +14,9 @@
 #include "CCControlButtonLoader.h"
 #include "CCParticleSystemQuadLoader.h"
 #include "CCScrollViewLoader.h"
+// Plug-in
+#include "CCLabelTTFv2Loader.h"
+#include "CCLabelBMFontv2Loader.h"
 
 
 
@@ -42,6 +45,10 @@ void CCNodeLoaderLibrary::registerDefaultCCNodeLoaders() {
     this->registerCCNodeLoader("CCMenuItemImage", CCMenuItemImageLoader::loader());
     this->registerCCNodeLoader("CCControlButton", CCControlButtonLoader::loader());
     this->registerCCNodeLoader("CCParticleSystemQuad", CCParticleSystemQuadLoader::loader());
+
+	// Plug-in
+    this->registerCCNodeLoader("CCLabelTTFv2", CCLabelTTFv2Loader::loader());
+	this->registerCCNodeLoader("CCLabelBMFontv2", CCLabelBMFontv2Loader::loader());
 }
 
 void CCNodeLoaderLibrary::registerCCNodeLoader(const char * pClassName, CCNodeLoader * pCCNodeLoader) {

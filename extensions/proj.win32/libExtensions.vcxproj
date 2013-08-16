@@ -130,7 +130,9 @@
     <ClCompile Include="..\CCBReader\CCControlLoader.cpp" />
     <ClCompile Include="..\CCBReader\CCData.cpp" />
     <ClCompile Include="..\CCBReader\CCLabelBMFontLoader.cpp" />
+    <ClCompile Include="..\CCBReader\CCLabelBMFontv2Loader.cpp" />
     <ClCompile Include="..\CCBReader\CCLabelTTFLoader.cpp" />
+    <ClCompile Include="..\CCBReader\CCLabelTTFv2Loader.cpp" />
     <ClCompile Include="..\CCBReader\CCLayerColorLoader.cpp" />
     <ClCompile Include="..\CCBReader\CCLayerGradientLoader.cpp" />
     <ClCompile Include="..\CCBReader\CCLayerLoader.cpp" />
@@ -244,7 +246,9 @@
     <ClInclude Include="..\CCBReader\CCControlLoader.h" />
     <ClInclude Include="..\CCBReader\CCData.h" />
     <ClInclude Include="..\CCBReader\CCLabelBMFontLoader.h" />
+    <ClInclude Include="..\CCBReader\CCLabelBMFontv2Loader.h" />
     <ClInclude Include="..\CCBReader\CCLabelTTFLoader.h" />
+    <ClInclude Include="..\CCBReader\CCLabelTTFv2Loader.h" />
     <ClInclude Include="..\CCBReader\CCLayerColorLoader.h" />
     <ClInclude Include="..\CCBReader\CCLayerGradientLoader.h" />
     <ClInclude Include="..\CCBReader\CCLayerLoader.h" />

@@ -176,7 +176,9 @@ xcopy /Y /Q "$(ProjectDir)..\platform\third_party\win32\libraries\*.*" "$(OutDir
     <ClCompile Include="..\actions\CCActionTween.cpp" />
     <ClCompile Include="..\label_nodes\CCLabelAtlas.cpp" />
     <ClCompile Include="..\label_nodes\CCLabelBMFont.cpp" />
+    <ClCompile Include="..\label_nodes\CCLabelBMFontv2.cpp" />
     <ClCompile Include="..\label_nodes\CCLabelTTF.cpp" />
+    <ClCompile Include="..\label_nodes\CCLabelTTFv2.cpp" />
     <ClCompile Include="..\layers_scenes_transitions_nodes\CCLayer.cpp" />
     <ClCompile Include="..\layers_scenes_transitions_nodes\CCScene.cpp" />
     <ClCompile Include="..\layers_scenes_transitions_nodes\CCTransition.cpp" />
@@ -315,7 +317,9 @@ xcopy /Y /Q "$(ProjectDir)..\platform\third_party\win32\libraries\*.*" "$(OutDir
     <ClInclude Include="..\include\cocos2d.h" />
     <ClInclude Include="..\label_nodes\CCLabelAtlas.h" />
     <ClInclude Include="..\label_nodes\CCLabelBMFont.h" />
+    <ClInclude Include="..\label_nodes\CCLabelBMFontv2.h" />
     <ClInclude Include="..\label_nodes\CCLabelTTF.h" />
+    <ClInclude Include="..\label_nodes\CCLabelTTFv2.h" />
     <ClInclude Include="..\layers_scenes_transitions_nodes\CCLayer.h" />
     <ClInclude Include="..\layers_scenes_transitions_nodes\CCScene.h" />
     <ClInclude Include="..\layers_scenes_transitions_nodes\CCTransition.h" />

@@ -363,6 +363,12 @@
     <ClCompile Include="..\CCArmature\animation\CCArmatureAnimation.cpp">
       <Filter>CCArmature\animation</Filter>
     </ClCompile>
+    <ClCompile Include="..\CCBReader\CCLabelBMFontv2Loader.cpp">
+      <Filter>CCBReader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CCBReader\CCLabelTTFv2Loader.cpp">
+      <Filter>CCBReader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GUI\CCScrollView\CCScrollView.h">
@@ -642,6 +648,12 @@
     </ClInclude>
     <ClInclude Include="..\CCArmature\animation\CCArmatureAnimation.h">
       <Filter>CCArmature\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CCBReader\CCLabelBMFontv2Loader.h">
+      <Filter>CCBReader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CCBReader\CCLabelTTFv2Loader.h">
+      <Filter>CCBReader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -474,6 +474,12 @@
     <ClCompile Include="..\support\component\CCComponentContainer.cpp">
       <Filter>support\component</Filter>
     </ClCompile>
+    <ClCompile Include="..\label_nodes\CCLabelBMFontv2.cpp">
+      <Filter>label_nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\label_nodes\CCLabelTTFv2.cpp">
+      <Filter>label_nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\base_nodes\CCAtlasNode.h">
@@ -951,6 +957,12 @@
     </ClInclude>
     <ClInclude Include="..\support\component\CCComponentContainer.h">
       <Filter>support\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\label_nodes\CCLabelBMFontv2.h">
+      <Filter>label_nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\label_nodes\CCLabelTTFv2.h">
+      <Filter>label_nodes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

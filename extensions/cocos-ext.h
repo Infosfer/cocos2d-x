@@ -31,6 +31,9 @@
 #include "CCBReader/CCBValue.h"
 #include "CCBReader/CCData.h"
 #include "CCBReader/CCNode+CCBRelativePositioning.h"
+// Plug-in
+#include "CCBReader/CCLabelBMFontv2Loader.h"
+#include "CCBReader/CCLabelTTFv2Loader.h"
 
 #include "GUI/CCControlExtension/CCControlExtensions.h"
 #include "GUI/CCScrollView/CCScrollView.h"
