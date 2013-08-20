@@ -369,6 +369,9 @@
     <ClCompile Include="..\CCBReader\CCLabelTTFv2Loader.cpp">
       <Filter>CCBReader</Filter>
     </ClCompile>
+    <ClCompile Include="..\CCBReader\CCParticleSystemQuadv2Loader.cpp">
+      <Filter>CCBReader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GUI\CCScrollView\CCScrollView.h">
@@ -653,6 +656,9 @@
       <Filter>CCBReader</Filter>
     </ClInclude>
     <ClInclude Include="..\CCBReader\CCLabelTTFv2Loader.h">
+      <Filter>CCBReader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CCBReader\CCParticleSystemQuadv2Loader.h">
       <Filter>CCBReader</Filter>
     </ClInclude>
   </ItemGroup>

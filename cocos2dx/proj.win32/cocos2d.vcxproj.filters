@@ -480,6 +480,9 @@
     <ClCompile Include="..\label_nodes\CCLabelTTFv2.cpp">
       <Filter>label_nodes</Filter>
     </ClCompile>
+    <ClCompile Include="..\particle_nodes\CCParticleSystemQuadv2.cpp">
+      <Filter>particle_nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\base_nodes\CCAtlasNode.h">
@@ -963,6 +966,9 @@
     </ClInclude>
     <ClInclude Include="..\label_nodes\CCLabelTTFv2.h">
       <Filter>label_nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\particle_nodes\CCParticleSystemQuadv2.h">
+      <Filter>particle_nodes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

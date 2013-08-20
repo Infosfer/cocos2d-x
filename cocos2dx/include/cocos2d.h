@@ -123,6 +123,7 @@ THE SOFTWARE.
 #include "particle_nodes/CCParticleSystem.h"
 #include "particle_nodes/CCParticleExamples.h"
 #include "particle_nodes/CCParticleSystemQuad.h"
+#include "particle_nodes/CCParticleSystemQuadv2.h"
 
 // platform
 #include "platform/CCDevice.h"

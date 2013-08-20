@@ -17,6 +17,7 @@
 // Plug-in
 #include "CCLabelTTFv2Loader.h"
 #include "CCLabelBMFontv2Loader.h"
+#include "CCParticleSystemQuadv2Loader.h"
 
 
 
@@ -49,6 +50,7 @@ void CCNodeLoaderLibrary::registerDefaultCCNodeLoaders() {
 	// Plug-in
     this->registerCCNodeLoader("CCLabelTTFv2", CCLabelTTFv2Loader::loader());
 	this->registerCCNodeLoader("CCLabelBMFontv2", CCLabelBMFontv2Loader::loader());
+	this->registerCCNodeLoader("CCParticleSystemQuadv2", CCParticleSystemQuadv2Loader::loader());
 }
 
 void CCNodeLoaderLibrary::registerCCNodeLoader(const char * pClassName, CCNodeLoader * pCCNodeLoader) {

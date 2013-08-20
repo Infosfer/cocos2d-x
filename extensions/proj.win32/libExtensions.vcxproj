@@ -142,6 +142,7 @@
     <ClCompile Include="..\CCBReader\CCNodeLoader.cpp" />
     <ClCompile Include="..\CCBReader\CCNodeLoaderLibrary.cpp" />
     <ClCompile Include="..\CCBReader\CCParticleSystemQuadLoader.cpp" />
+    <ClCompile Include="..\CCBReader\CCParticleSystemQuadv2Loader.cpp" />
     <ClCompile Include="..\CCBReader\CCScale9SpriteLoader.cpp" />
     <ClCompile Include="..\CCBReader\CCScrollViewLoader.cpp" />
     <ClCompile Include="..\CCBReader\CCSpriteLoader.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="..\CCBReader\CCNodeLoaderLibrary.h" />
     <ClInclude Include="..\CCBReader\CCNodeLoaderListener.h" />
     <ClInclude Include="..\CCBReader\CCParticleSystemQuadLoader.h" />
+    <ClInclude Include="..\CCBReader\CCParticleSystemQuadv2Loader.h" />
     <ClInclude Include="..\CCBReader\CCScale9SpriteLoader.h" />
     <ClInclude Include="..\CCBReader\CCScrollViewLoader.h" />
     <ClInclude Include="..\CCBReader\CCSpriteLoader.h" />
