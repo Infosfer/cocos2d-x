@@ -210,7 +210,7 @@ public:
    	}
    
     /** Get custom headers **/
-   	inline std::vector<std::string>& getHeaders()
+   	inline std::vector<std::string> getHeaders()
    	{
    		return _headers;
    	}
