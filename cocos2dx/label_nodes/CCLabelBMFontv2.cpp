@@ -25,7 +25,7 @@ CCLabelBMFontv2 * CCLabelBMFontv2::create() {
 }
 
 bool CCLabelBMFontv2::init() {
-	_shrink = FALSE;
+	_shrink = false;
 	_shrinkScale = 1;
 	_fontScale = 1;
 
