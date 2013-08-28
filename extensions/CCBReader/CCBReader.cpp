@@ -582,7 +582,7 @@ CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
         memberVarAssignmentName = this->readCachedString();
     }
 
-	if (strcmp(className.c_str(), "CCNode") == 0) {
+	if (strcmp(className.c_str(), "CCNode") == 0 || strcmp(className.c_str(), "CCLayer") == 0) {
 		className = "CCSprite";
 	}
 
