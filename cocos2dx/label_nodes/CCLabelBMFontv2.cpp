@@ -30,6 +30,7 @@ bool CCLabelBMFontv2::init() {
 	_fontScale = 1;
 
 	_helperLabel = CCLabelBMFont::create();
+    _helperLabel->retain();
 	_helperLabel->ignoreAnchorPointForPosition(true);
 	_helperLabel->setAnchorPoint(CCPointMake(0,0));
 	addChild(_helperLabel);
