@@ -2,7 +2,7 @@
 
 #include "cocos2d.h"
 
-USING_NS_CC;
+NS_CC_BEGIN
 
 class CC_DLL CCLabelBMFontv2 : public CCNode, public CCRGBAProtocol
 {
@@ -21,7 +21,7 @@ public:
 	void						setShrink(bool value);
 	void						setFontScale(float fontSc);
 
-    
+
 	// CCNode
 	virtual void				setContentSize(const CCSize &size);
 	virtual void				setAnchorPoint(const CCPoint& point);
@@ -32,7 +32,7 @@ public:
 	// CCRGBAProtocol
 	virtual const ccColor3B&	getColor(void);
 	virtual void				setColor(const ccColor3B& color);
-	virtual GLubyte				getOpacity();	
+	virtual GLubyte				getOpacity();
 	virtual void				setOpacity(GLubyte opacity);
     virtual const ccColor3B&	getDisplayedColor(void);
     virtual GLubyte				getDisplayedOpacity(void);
@@ -44,7 +44,7 @@ public:
     virtual bool				isCascadeOpacityEnabled(void);
     virtual void				setCascadeOpacityEnabled(bool cascadeOpacityEnabled);
     virtual void				updateDisplayedOpacity(GLubyte opacity);
-	
+
 	// CCLabelProtocol
 	void						setFntFile(const char *fntFile);
 	const char*					getFntFile();
@@ -64,3 +64,5 @@ private:
 	float						_shrinkScale;
 	float						_fontScale;
 };
+
+NS_CC_END
