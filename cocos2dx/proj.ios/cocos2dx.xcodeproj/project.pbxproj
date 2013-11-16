@@ -315,6 +315,12 @@
 		4EF8999916E207E70040A527 /* CCTMXTiledMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EF8998D16E207E70040A527 /* CCTMXTiledMap.h */; };
 		4EF8999A16E207E70040A527 /* CCTMXXMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4EF8998E16E207E70040A527 /* CCTMXXMLParser.cpp */; };
 		4EF8999B16E207E70040A527 /* CCTMXXMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EF8998F16E207E70040A527 /* CCTMXXMLParser.h */; };
+		B2CDFBED182B0D5200C2A356 /* CCLabelBMFontv2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDFBE9182B0D5200C2A356 /* CCLabelBMFontv2.cpp */; };
+		B2CDFBEE182B0D5200C2A356 /* CCLabelBMFontv2.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CDFBEA182B0D5200C2A356 /* CCLabelBMFontv2.h */; };
+		B2CDFBEF182B0D5200C2A356 /* CCLabelTTFv2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDFBEB182B0D5200C2A356 /* CCLabelTTFv2.cpp */; };
+		B2CDFBF0182B0D5200C2A356 /* CCLabelTTFv2.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CDFBEC182B0D5200C2A356 /* CCLabelTTFv2.h */; };
+		B2CDFBF3182B0D9600C2A356 /* CCParticleSystemQuadv2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CDFBF1182B0D9600C2A356 /* CCParticleSystemQuadv2.cpp */; };
+		B2CDFBF4182B0D9600C2A356 /* CCParticleSystemQuadv2.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CDFBF2182B0D9600C2A356 /* CCParticleSystemQuadv2.h */; };
 		D43F7F8A15C7D8BA00D713FC /* CCTouch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D43F7F8915C7D8BA00D713FC /* CCTouch.cpp */; };
 /* End PBXBuildFile section */
 
@@ -630,6 +636,15 @@
 		4EF8998D16E207E70040A527 /* CCTMXTiledMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCTMXTiledMap.h; sourceTree = "<group>"; };
 		4EF8998E16E207E70040A527 /* CCTMXXMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCTMXXMLParser.cpp; sourceTree = "<group>"; };
 		4EF8998F16E207E70040A527 /* CCTMXXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCTMXXMLParser.h; sourceTree = "<group>"; };
+		B25905281831B4F500B35CF7 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		B259052A1831B56F00B35CF7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		B259052C1831B57D00B35CF7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		B2CDFBE9182B0D5200C2A356 /* CCLabelBMFontv2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCLabelBMFontv2.cpp; sourceTree = "<group>"; };
+		B2CDFBEA182B0D5200C2A356 /* CCLabelBMFontv2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCLabelBMFontv2.h; sourceTree = "<group>"; };
+		B2CDFBEB182B0D5200C2A356 /* CCLabelTTFv2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCLabelTTFv2.cpp; sourceTree = "<group>"; };
+		B2CDFBEC182B0D5200C2A356 /* CCLabelTTFv2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCLabelTTFv2.h; sourceTree = "<group>"; };
+		B2CDFBF1182B0D9600C2A356 /* CCParticleSystemQuadv2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCParticleSystemQuadv2.cpp; sourceTree = "<group>"; };
+		B2CDFBF2182B0D9600C2A356 /* CCParticleSystemQuadv2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCParticleSystemQuadv2.h; sourceTree = "<group>"; };
 		D43F7F8915C7D8BA00D713FC /* CCTouch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCTouch.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -649,6 +664,9 @@
 		1551A334158F2AB200E66CFE = {
 			isa = PBXGroup;
 			children = (
+				B259052C1831B57D00B35CF7 /* SystemConfiguration.framework */,
+				B259052A1831B56F00B35CF7 /* Security.framework */,
+				B25905281831B4F500B35CF7 /* CoreText.framework */,
 				1551A873158F2B4700E66CFE /* cocos2dx-Prefix.pch */,
 				1551A353158F2ADE00E66CFE /* cocos2dx */,
 				1551A341158F2AB200E66CFE /* Frameworks */,
@@ -907,6 +925,10 @@
 			isa = PBXGroup;
 			children = (
 				1551A419158F2ADE00E66CFE /* CCLabelAtlas.cpp */,
+				B2CDFBE9182B0D5200C2A356 /* CCLabelBMFontv2.cpp */,
+				B2CDFBEA182B0D5200C2A356 /* CCLabelBMFontv2.h */,
+				B2CDFBEB182B0D5200C2A356 /* CCLabelTTFv2.cpp */,
+				B2CDFBEC182B0D5200C2A356 /* CCLabelTTFv2.h */,
 				1551A41A158F2ADE00E66CFE /* CCLabelAtlas.h */,
 				1551A41B158F2ADE00E66CFE /* CCLabelBMFont.cpp */,
 				1551A41C158F2ADE00E66CFE /* CCLabelBMFont.h */,
@@ -962,6 +984,8 @@
 		1551A436158F2ADE00E66CFE /* particle_nodes */ = {
 			isa = PBXGroup;
 			children = (
+				B2CDFBF1182B0D9600C2A356 /* CCParticleSystemQuadv2.cpp */,
+				B2CDFBF2182B0D9600C2A356 /* CCParticleSystemQuadv2.h */,
 				1551A437158F2ADE00E66CFE /* CCParticleBatchNode.cpp */,
 				1551A438158F2ADE00E66CFE /* CCParticleBatchNode.h */,
 				1551A439158F2ADE00E66CFE /* CCParticleExamples.cpp */,
@@ -1473,6 +1497,9 @@
 				4698CFAA174CBB700066A57B /* CCTextureETC.h in Headers */,
 				37EEEBF9175DDF3A003C1193 /* CCComponent.h in Headers */,
 				37EEEBFB175DDF3A003C1193 /* CCComponentContainer.h in Headers */,
+				B2CDFBEE182B0D5200C2A356 /* CCLabelBMFontv2.h in Headers */,
+				B2CDFBF0182B0D5200C2A356 /* CCLabelTTFv2.h in Headers */,
+				B2CDFBF4182B0D9600C2A356 /* CCParticleSystemQuadv2.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1661,6 +1688,9 @@
 				4698CFA9174CBB700066A57B /* CCTextureETC.cpp in Sources */,
 				37EEEBF8175DDF3A003C1193 /* CCComponent.cpp in Sources */,
 				37EEEBFA175DDF3A003C1193 /* CCComponentContainer.cpp in Sources */,
+				B2CDFBED182B0D5200C2A356 /* CCLabelBMFontv2.cpp in Sources */,
+				B2CDFBEF182B0D5200C2A356 /* CCLabelTTFv2.cpp in Sources */,
+				B2CDFBF3182B0D9600C2A356 /* CCParticleSystemQuadv2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
