@@ -16,3 +16,12 @@
 [submodule "plugin"]
 	path = plugin
 	url = https://github.com/cocos2d-x/plugin-x.git
+[submodule "projects/Game3"]
+	path = projects/Game3
+	url = ssh://infosfer@infosfer.kilnhg.com/JSquared/JSquared---Games/Game3
+[submodule "projects/ccbTextureSheetFixer"]
+	path = projects/ccbTextureSheetFixer
+	url = https://infosfer.kilnhg.com/Code/Infosfer/Infosfer/ccbTextureSheetFixer.git
+[submodule "projects/common"]
+	path = projects/common
+	url = ssh://infosfer@infosfer.kilnhg.com/Infosfer/Infosfer/Common
