@@ -665,6 +665,7 @@ CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
         embeddedNode->setScaleY(ccbFileNode->getScaleY());
         embeddedNode->setTag(ccbFileNode->getTag());
         embeddedNode->setVisible(true);
+		embeddedNode->setInstanceName(ccbFileNode->getInstanceName());
         //embeddedNode->ignoreAnchorPointForPosition(ccbFileNode->isIgnoreAnchorPointForPosition());
         
         mActionManager->moveAnimationsFromNode(ccbFileNode, embeddedNode);
