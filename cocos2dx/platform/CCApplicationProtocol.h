@@ -28,6 +28,8 @@ public:
 
     virtual ~CCApplicationProtocol() {}
 
+    virtual bool applicationWillFinishLaunching() = 0;
+    
     /**
     @brief    Implement CCDirector and CCScene init code here.
     @return true    Initialize success, app continue.
