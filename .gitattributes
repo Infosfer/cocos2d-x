@@ -1,0 +1,8 @@
+*.c text
+*.h text
+*.cpp text
+*.m text
+*.mm text
+*.plist text
+*.json text
+*.xml text
