@@ -43,22 +43,16 @@ bool CCLabelBMFontv2::init() {
 }
 
 void CCLabelBMFontv2::setString(const char *newString) {
-	CCLOG("CCLabelBMFontv2::setString");
-
 	_helperLabel->setString(newString);
 
 	refresh();
 }
 
 const char* CCLabelBMFontv2::getString() {
-	CCLOG("CCLabelBMFontv2::getString");
-
 	return _helperLabel->getString();
 }
 
 void CCLabelBMFontv2::setHorizontalAlignment(CCTextAlignment alignment) {
-	CCLOG("CCLabelBMFontv2::setHorizontalAlignment");
-
 	_horizontalAlignment = alignment;
 
 	_helperLabel->setAlignment(_horizontalAlignment);
@@ -79,8 +73,6 @@ void CCLabelBMFontv2::setHorizontalAlignment(CCTextAlignment alignment) {
 }
 
 void CCLabelBMFontv2::setVerticalAlignment(CCVerticalTextAlignment alignment) {
-	CCLOG("CCLabelBMFontv2::setVerticalAlignment");
-
 	_verticalAlignment = alignment;
 
 	switch (_verticalAlignment) {
@@ -100,8 +92,6 @@ void CCLabelBMFontv2::setVerticalAlignment(CCVerticalTextAlignment alignment) {
 
 void CCLabelBMFontv2::setShrink(bool value) {
 	if(_shrink != value) {
-		CCLOG("CCLabelBMFontv2::setShrink");
-
 		_shrink = value;
 
 		if(_shrink){
@@ -119,11 +109,7 @@ void CCLabelBMFontv2::refresh() {
 }
 
 void CCLabelBMFontv2::updateTexture() {
-	CCLOG("CCLabelBMFontv2::updateTexture");
-
 	if(_shrink){
-		CCLOG("CCLabelBMFontv2::RealContentSize: %f %f", _helperLabel->getContentSize().width, _helperLabel->getContentSize().height);
-
 		float scaleFactor = getContentSize().width / (_helperLabel->getContentSize().width * _fontScale);
 
 		if(scaleFactor < 1){
@@ -132,10 +118,6 @@ void CCLabelBMFontv2::updateTexture() {
 		else if(_fontScale != 1){
 			_shrinkScale = 1;
 		}
-
-		CCLOG("CCLabelBMFontv2::EditorScale: %f", _fontScale);
-		CCLOG("CCLabelBMFontv2::ShrinkScale: %f", _shrinkScale);
-		CCLOG("CCLabelBMFontv2::Scale: %f", _helperLabel->getScale());
 
 		_helperLabel->setScale(_fontScale * _shrinkScale);
 
@@ -147,8 +129,6 @@ void CCLabelBMFontv2::updateTexture() {
 
 
 void CCLabelBMFontv2::setFontScale(float fontSc) {
-	CCLOG("CCLabelBMFontv2::setFontScale %f", fontSc);
-
 	_fontScale = fontSc;
 	refresh();
 }
@@ -172,8 +152,6 @@ ccBlendFunc CCLabelBMFontv2::getBlendFunc() {
 
 // CCNode
 void CCLabelBMFontv2::setContentSize(const CCSize &size) {
-	CCLOG("CCLabelBMFontv2::setDimensions: Width = %f Height = %f", size.width, size.height);
-
 	CCNode::setContentSize(size);
 
 	if(!_shrink){
