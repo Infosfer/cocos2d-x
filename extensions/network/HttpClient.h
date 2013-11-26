@@ -103,6 +103,8 @@ private:
     /** Poll function called from main thread to dispatch callbacks when http requests finished **/
     void dispatchResponseCallbacks(float delta);
     
+    CC_SYNTHESIZE_RETAIN(CCString*, _curlProxyIp, CurlProxyIp);
+    CC_SYNTHESIZE(int, _curlProxyPort, CurlProxyPort);
 private:
     int _timeoutForConnect;
     int _timeoutForRead;

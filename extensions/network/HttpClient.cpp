@@ -334,8 +334,14 @@ static int processGetTask(CCHttpRequest *request, write_callback callback, void 
 {
     CURLRaii curl;
     bool ok = curl.init(request, callback, stream, headerCallback, headerStream)
-            && curl.setOption(CURLOPT_FOLLOWLOCATION, true)
-            && curl.perform(responseCode);
+        && curl.setOption(CURLOPT_FOLLOWLOCATION, true);
+    
+    if (CCHttpClient::getInstance()->getCurlProxyIp() != NULL) {
+        ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
+        && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
+    }
+
+    ok = ok && curl.perform(responseCode);
     return ok ? 0 : 1;
 }
 
@@ -346,8 +352,14 @@ static int processPostTask(CCHttpRequest *request, write_callback callback, void
     bool ok = curl.init(request, callback, stream, headerCallback, headerStream)
             && curl.setOption(CURLOPT_POST, 1)
             && curl.setOption(CURLOPT_POSTFIELDS, request->getRequestData())
-            && curl.setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize())
-            && curl.perform(responseCode);
+    && curl.setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize());
+    
+    if (CCHttpClient::getInstance()->getCurlProxyIp() != NULL) {
+        ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
+        && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
+    }
+    
+    ok = ok && curl.perform(responseCode);
     return ok ? 0 : 1;
 }
 
@@ -358,8 +370,14 @@ static int processPutTask(CCHttpRequest *request, write_callback callback, void 
     bool ok = curl.init(request, callback, stream, headerCallback, headerStream)
             && curl.setOption(CURLOPT_CUSTOMREQUEST, "PUT")
             && curl.setOption(CURLOPT_POSTFIELDS, request->getRequestData())
-            && curl.setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize())
-            && curl.perform(responseCode);
+    && curl.setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize());
+    
+    if (CCHttpClient::getInstance()->getCurlProxyIp() != NULL) {
+        ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
+        && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
+    }
+    
+    ok = ok && curl.perform(responseCode);
     return ok ? 0 : 1;
 }
 
@@ -369,8 +387,14 @@ static int processDeleteTask(CCHttpRequest *request, write_callback callback, vo
     CURLRaii curl;
     bool ok = curl.init(request, callback, stream, headerCallback, headerStream)
             && curl.setOption(CURLOPT_CUSTOMREQUEST, "DELETE")
-            && curl.setOption(CURLOPT_FOLLOWLOCATION, true)
-            && curl.perform(responseCode);
+    && curl.setOption(CURLOPT_FOLLOWLOCATION, true);
+
+    if (CCHttpClient::getInstance()->getCurlProxyIp() != NULL) {
+        ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
+        && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
+    }
+    
+    ok = ok && curl.perform(responseCode);
     return ok ? 0 : 1;
 }
 
@@ -395,6 +419,9 @@ CCHttpClient::CCHttpClient()
 : _timeoutForConnect(30)
 , _timeoutForRead(60)
 {
+    _curlProxyIp = NULL;
+    _curlProxyPort = -1;
+    
     CCDirector::sharedDirector()->getScheduler()->scheduleSelector(
                     schedule_selector(CCHttpClient::dispatchResponseCallbacks), this, 0, false);
     CCDirector::sharedDirector()->getScheduler()->pauseTarget(this);
