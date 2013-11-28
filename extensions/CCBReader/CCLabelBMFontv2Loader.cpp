@@ -72,7 +72,7 @@ void CCLabelBMFontv2Loader::onHandlePropTypeIntegerLabeled(CCNode * pNode, CCNod
 
 void CCLabelBMFontv2Loader::onHandlePropTypeCheck(CCNode * pNode, CCNode * pParent, const char * pPropertyName, bool pCheck, CCBReader * pCCBReader) {
 	if(strcmp(pPropertyName, PROPERTY_SHRINK) == 0) {
-		((CCLabelBMFontv2*)pNode)->setShrink(true);
+		((CCLabelBMFontv2*)pNode)->setShrink(pCheck);
 	}
 }
 
