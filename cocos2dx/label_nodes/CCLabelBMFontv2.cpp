@@ -33,6 +33,8 @@ bool CCLabelBMFontv2::init() {
     _helperLabel->retain();
 	_helperLabel->ignoreAnchorPointForPosition(true);
 	_helperLabel->setAnchorPoint(CCPointMake(0,0));
+    ccBlendFunc bldFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
+    _helperLabel->setBlendFunc(bldFunc);
 	addChild(_helperLabel);
 
 	setHorizontalAlignment(kCCTextAlignmentCenter);
