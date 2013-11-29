@@ -4,7 +4,7 @@
 
 NS_CC_BEGIN
 
-class CC_DLL CCLabelBMFontv2 : public CCNode, public CCRGBAProtocol
+class CC_DLL CCLabelBMFontv2 : public CCNodeRGBA
 {
 public:
 	CCLabelBMFontv2();
