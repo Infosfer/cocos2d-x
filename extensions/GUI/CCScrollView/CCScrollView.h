@@ -58,7 +58,7 @@ public:
  * ScrollView support for cocos2d for iphone.
  * It provides scroll view functionalities to cocos2d projects natively.
  */
-class CCScrollView : public CCLayer
+class CCScrollView : public CCLayerRGBA
 {
 public:
     CCScrollView();
