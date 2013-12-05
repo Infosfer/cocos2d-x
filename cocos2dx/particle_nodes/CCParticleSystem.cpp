@@ -393,8 +393,10 @@ bool CCParticleSystem::initWithTotalParticles(unsigned int numberOfParticles)
 {
     m_uTotalParticles = numberOfParticles;
 
+    CCLOG("CCParticleSystem DELETE PARTICLES %p", this);
     CC_SAFE_FREE(m_pParticles);
-    
+
+    CCLOG("CCParticleSystem ALLOC PARTICLES %p", this);
     m_pParticles = (tCCParticle*)calloc(m_uTotalParticles, sizeof(tCCParticle));
 
     if( ! m_pParticles )
@@ -447,8 +449,10 @@ CCParticleSystem::~CCParticleSystem()
     // Since the scheduler retains the "target (in this case the ParticleSystem)
 	// it is not needed to call "unscheduleUpdate" here. In fact, it will be called in "cleanup"
     //unscheduleUpdate();
+    CCLOG("CCParticleSystem DELETE PARTICLES %p", this);
     CC_SAFE_FREE(m_pParticles);
     CC_SAFE_RELEASE(m_pTexture);
+    this->unscheduleUpdate();
 }
 
 bool CCParticleSystem::addParticle()
@@ -588,12 +592,12 @@ void CCParticleSystem::resetSystem()
 {
     m_bIsActive = true;
     m_fElapsed = 0;
-    for (m_uParticleIdx = 0; m_uParticleIdx < m_uParticleCount; ++m_uParticleIdx)
-    {
-        tCCParticle *p = &m_pParticles[m_uParticleIdx];
-        p->timeToLive = 0;
-    }
+    m_uParticleCount = 0;
+    m_uParticleIdx = 0;
+    this->unscheduleUpdate();
+    this->scheduleUpdateWithPriority(1);
 }
+
 bool CCParticleSystem::isFull()
 {
     return (m_uParticleCount == m_uTotalParticles);
