@@ -91,8 +91,12 @@ CCParticleSystemQuad::~CCParticleSystemQuad()
 {
     if (NULL == m_pBatchNode)
     {
+        CCLOG("CCParticleSystemQuad DEALLOC QUADS&INDICES %p", this);
+
         CC_SAFE_FREE(m_pQuads);
         CC_SAFE_FREE(m_pIndices);
+        CCLOG("CCParticleSystemQuad DEALLOC BUFFERS %p", this);
+        CCLOG("CCParticleSystemQuad DEALLOC VERTEX ARRAYS %p", this);
         glDeleteBuffers(2, &m_pBuffersVBO[0]);
 #if CC_TEXTURE_ATLAS_USE_VAO
         glDeleteVertexArrays(1, &m_uVAOname);
@@ -409,6 +413,9 @@ void CCParticleSystemQuad::setTotalParticles(unsigned int tp)
         size_t quadsSize = sizeof(m_pQuads[0]) * tp * 1;
         size_t indicesSize = sizeof(m_pIndices[0]) * tp * 6 * 1;
 
+        CCLOG("CCParticleSystemQuad REALLOC PARTICLES %p", this);
+        CCLOG("CCParticleSystemQuad REALLOC QUADS&INDICES %p", this);
+
         tCCParticle* particlesNew = (tCCParticle*)realloc(m_pParticles, particlesSize);
         ccV3F_C4B_T2F_Quad* quadsNew = (ccV3F_C4B_T2F_Quad*)realloc(m_pQuads, quadsSize);
         GLushort* indicesNew = (GLushort*)realloc(m_pIndices, indicesSize);
@@ -468,15 +475,19 @@ void CCParticleSystemQuad::setTotalParticles(unsigned int tp)
 #if CC_TEXTURE_ATLAS_USE_VAO
 void CCParticleSystemQuad::setupVBOandVAO()
 {
+    CCLOG("CCParticleSystemQuad DELETE BUFFERS %p", this);
+    CCLOG("CCParticleSystemQuad DELETE VERTEX ARRAYS %p", this);
+
     // clean VAO
     glDeleteBuffers(2, &m_pBuffersVBO[0]);
     glDeleteVertexArrays(1, &m_uVAOname);
-    
+
+    CCLOG("CCParticleSystemQuad ALLOC VERTEX ARRAYS %p", this);
     glGenVertexArrays(1, &m_uVAOname);
     ccGLBindVAO(m_uVAOname);
 
 #define kQuadSize sizeof(m_pQuads[0].bl)
-
+    CCLOG("CCParticleSystemQuad ALLOC BUFFERS %p", this);
     glGenBuffers(2, &m_pBuffersVBO[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_pBuffersVBO[0]);
@@ -508,8 +519,10 @@ void CCParticleSystemQuad::setupVBOandVAO()
 
 void CCParticleSystemQuad::setupVBO()
 {
+    CCLOG("CCParticleSystemQuad DELETE BUFFERS %p", this);
     glDeleteBuffers(2, &m_pBuffersVBO[0]);
     
+    CCLOG("CCParticleSystemQuad ALLOC BUFFERS %p", this);
     glGenBuffers(2, &m_pBuffersVBO[0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_pBuffersVBO[0]);
@@ -539,15 +552,19 @@ bool CCParticleSystemQuad::allocMemory()
     CCAssert( ( !m_pQuads && !m_pIndices), "Memory already alloced");
     CCAssert( !m_pBatchNode, "Memory should not be alloced when not using batchNode");
 
+
+    CCLOG("CCParticleSystemQuad DELETE QUADS&INDICES %p", this);
     CC_SAFE_FREE(m_pQuads);
     CC_SAFE_FREE(m_pIndices);
 
+    CCLOG("CCParticleSystemQuad ALLOC QUADS&INDICES %p", this);
     m_pQuads = (ccV3F_C4B_T2F_Quad*)malloc(m_uTotalParticles * sizeof(ccV3F_C4B_T2F_Quad));
     m_pIndices = (GLushort*)malloc(m_uTotalParticles * 6 * sizeof(GLushort));
     
     if( !m_pQuads || !m_pIndices) 
     {
         CCLOG("cocos2d: Particle system: not enough memory");
+        CCLOG("CCParticleSystemQuad DELETE QUADS&INDICES %p", this);
         CC_SAFE_FREE(m_pQuads);
         CC_SAFE_FREE(m_pIndices);
 
@@ -588,9 +605,11 @@ void CCParticleSystemQuad::setBatchNode(CCParticleBatchNode * batchNode)
             ccV3F_C4B_T2F_Quad *quad = &(batchQuads[m_uAtlasIndex] );
             memcpy( quad, m_pQuads, m_uTotalParticles * sizeof(m_pQuads[0]) );
 
+            CCLOG("CCParticleSystemQuad DELETE QUADS&INDICES %p", this);
             CC_SAFE_FREE(m_pQuads);
             CC_SAFE_FREE(m_pIndices);
 
+            CCLOG("CCParticleSystemQuad DELETE BUFFERS AND VERTEX ARRAYS %p", this);
             glDeleteBuffers(2, &m_pBuffersVBO[0]);
 #if CC_TEXTURE_ATLAS_USE_VAO
             glDeleteVertexArrays(1, &m_uVAOname);
