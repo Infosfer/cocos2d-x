@@ -27,6 +27,7 @@ CCBAnimationManager::CCBAnimationManager()
 , mRunningSequence(NULL)
 , jsControlled(false)
 , mOwner(NULL)
+, mAnimationCompletedCallbackSetCounter(0)
 {
     init();
 }
@@ -837,9 +838,10 @@ void CCBAnimationManager::setAnimationCompletedCallback(CCObject *target, SEL_Ca
     
     if (mTarget)
     {
-        mTarget->release();
+        CC_SAFE_RELEASE_NULL(mTarget);
     }
     
+    mAnimationCompletedCallbackSetCounter++;
     mTarget = target;
     mAnimationCompleteCallbackFunc = callbackFunc;
 }
@@ -871,7 +873,11 @@ void CCBAnimationManager::sequenceCompleted()
     }
 
 	if (mTarget && mAnimationCompleteCallbackFunc) {
+        int counterTemp = mAnimationCompletedCallbackSetCounter;
 		(mTarget->*mAnimationCompleteCallbackFunc)();
+        if (counterTemp == mAnimationCompletedCallbackSetCounter) {
+            CC_SAFE_RELEASE_NULL(mTarget);
+        }
 	}
 }
 

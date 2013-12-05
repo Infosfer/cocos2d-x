@@ -41,6 +41,7 @@ private:
     std::string lastCompletedSequenceName;
 
     SEL_CallFunc mAnimationCompleteCallbackFunc;
+    int mAnimationCompletedCallbackSetCounter;
     CCObject *mTarget;
     
     
