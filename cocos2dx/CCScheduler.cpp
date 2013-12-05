@@ -502,6 +502,8 @@ void CCScheduler::removeUpdateFromHash(struct _listEntry *entry)
         DL_DELETE(*element->list, element->entry);
         free(element->entry);
 
+        //element->entry = NULL;
+        
         // hash entry
         CCObject* pTarget = element->target;
         HASH_DEL(m_pHashForUpdates, element);
