@@ -37,9 +37,11 @@ void CCParticleSystemQuadLoader::onHandlePropTypeIntegerLabeled(CCNode * pNode, 
 
 void CCParticleSystemQuadLoader::onHandlePropTypePoint(CCNode * pNode, CCNode * pParent, const char * pPropertyName, CCPoint pPoint, CCBReader * pCCBReader) {
     if(strcmp(pPropertyName, PROPERTY_POSVAR) == 0) {
+        pPoint.x *= pCCBReader->getResolutionScale();
+        pPoint.y *= pCCBReader->getResolutionScale();
         ((CCParticleSystemQuad *)pNode)->setPosVar(pPoint);
     } else if(strcmp(pPropertyName, PROPERTY_GRAVITY) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setGravity(pPoint);
+        ((CCParticleSystemQuad *)pNode)->setGravity(pPoint * pCCBReader->getResolutionScale());
     } else {
         CCNodeLoader::onHandlePropTypePoint(pNode, pParent, pPropertyName, pPoint, pCCBReader);
     }
@@ -68,11 +70,11 @@ void CCParticleSystemQuadLoader::onHandlePropTypeFloatVar(CCNode * pNode, CCNode
         ((CCParticleSystemQuad *)pNode)->setLife(pFloatVar[0]);
         ((CCParticleSystemQuad *)pNode)->setLifeVar(pFloatVar[1]);
     } else if(strcmp(pPropertyName, PROPERTY_STARTSIZE) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setStartSize(pFloatVar[0]);
-        ((CCParticleSystemQuad *)pNode)->setStartSizeVar(pFloatVar[1]);
+        ((CCParticleSystemQuad *)pNode)->setStartSize(pFloatVar[0] * pCCBReader->getResolutionScale());
+        ((CCParticleSystemQuad *)pNode)->setStartSizeVar(pFloatVar[1] * pCCBReader->getResolutionScale());
     } else if(strcmp(pPropertyName, PROPERTY_ENDSIZE) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setEndSize(pFloatVar[0]);
-        ((CCParticleSystemQuad *)pNode)->setEndSizeVar(pFloatVar[1]);
+        ((CCParticleSystemQuad *)pNode)->setEndSize(pFloatVar[0] * pCCBReader->getResolutionScale());
+        ((CCParticleSystemQuad *)pNode)->setEndSizeVar(pFloatVar[1] * pCCBReader->getResolutionScale());
     } else if(strcmp(pPropertyName, PROPERTY_STARTSPIN) == 0) {
         ((CCParticleSystemQuad *)pNode)->setStartSpin(pFloatVar[0]);
         ((CCParticleSystemQuad *)pNode)->setStartSpinVar(pFloatVar[1]);
@@ -86,17 +88,17 @@ void CCParticleSystemQuadLoader::onHandlePropTypeFloatVar(CCNode * pNode, CCNode
         ((CCParticleSystemQuad *)pNode)->setSpeed(pFloatVar[0]);
         ((CCParticleSystemQuad *)pNode)->setSpeedVar(pFloatVar[1]);
     } else if(strcmp(pPropertyName, PROPERTY_TANGENTIALACCEL) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setTangentialAccel(pFloatVar[0]);
-        ((CCParticleSystemQuad *)pNode)->setTangentialAccelVar(pFloatVar[1]);
+        ((CCParticleSystemQuad *)pNode)->setTangentialAccel(pFloatVar[0] * pCCBReader->getResolutionScale());
+        ((CCParticleSystemQuad *)pNode)->setTangentialAccelVar(pFloatVar[1] * pCCBReader->getResolutionScale());
     } else if(strcmp(pPropertyName, PROPERTY_RADIALACCEL) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setRadialAccel(pFloatVar[0]);
-        ((CCParticleSystemQuad *)pNode)->setRadialAccelVar(pFloatVar[1]);
+        ((CCParticleSystemQuad *)pNode)->setRadialAccel(pFloatVar[0] * pCCBReader->getResolutionScale());
+        ((CCParticleSystemQuad *)pNode)->setRadialAccelVar(pFloatVar[1] * pCCBReader->getResolutionScale());
     } else if(strcmp(pPropertyName, PROPERTY_STARTRADIUS) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setStartRadius(pFloatVar[0]);
-        ((CCParticleSystemQuad *)pNode)->setStartRadiusVar(pFloatVar[1]);
+        ((CCParticleSystemQuad *)pNode)->setStartRadius(pFloatVar[0] * pCCBReader->getResolutionScale());
+        ((CCParticleSystemQuad *)pNode)->setStartRadiusVar(pFloatVar[1] * pCCBReader->getResolutionScale());
     } else if(strcmp(pPropertyName, PROPERTY_ENDRADIUS) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setEndRadius(pFloatVar[0]);
-        ((CCParticleSystemQuad *)pNode)->setEndRadiusVar(pFloatVar[1]);
+        ((CCParticleSystemQuad *)pNode)->setEndRadius(pFloatVar[0] * pCCBReader->getResolutionScale());
+        ((CCParticleSystemQuad *)pNode)->setEndRadiusVar(pFloatVar[1] * pCCBReader->getResolutionScale());
     } else if(strcmp(pPropertyName, PROPERTY_ROTATEPERSECOND) == 0) {
         ((CCParticleSystemQuad *)pNode)->setRotatePerSecond(pFloatVar[0]);
         ((CCParticleSystemQuad *)pNode)->setRotatePerSecondVar(pFloatVar[1]);
