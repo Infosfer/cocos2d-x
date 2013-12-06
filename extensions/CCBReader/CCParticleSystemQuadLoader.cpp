@@ -85,8 +85,8 @@ void CCParticleSystemQuadLoader::onHandlePropTypeFloatVar(CCNode * pNode, CCNode
         ((CCParticleSystemQuad *)pNode)->setAngle(pFloatVar[0]);
         ((CCParticleSystemQuad *)pNode)->setAngleVar(pFloatVar[1]);
     } else if(strcmp(pPropertyName, PROPERTY_SPEED) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setSpeed(pFloatVar[0]);
-        ((CCParticleSystemQuad *)pNode)->setSpeedVar(pFloatVar[1]);
+        ((CCParticleSystemQuad *)pNode)->setSpeed(pFloatVar[0] * pCCBReader->getResolutionScale());
+        ((CCParticleSystemQuad *)pNode)->setSpeedVar(pFloatVar[1] * pCCBReader->getResolutionScale());
     } else if(strcmp(pPropertyName, PROPERTY_TANGENTIALACCEL) == 0) {
         ((CCParticleSystemQuad *)pNode)->setTangentialAccel(pFloatVar[0] * pCCBReader->getResolutionScale());
         ((CCParticleSystemQuad *)pNode)->setTangentialAccelVar(pFloatVar[1] * pCCBReader->getResolutionScale());
