@@ -41,7 +41,9 @@ void CCParticleSystemQuadLoader::onHandlePropTypePoint(CCNode * pNode, CCNode * 
         pPoint.y *= pCCBReader->getResolutionScale();
         ((CCParticleSystemQuad *)pNode)->setPosVar(pPoint);
     } else if(strcmp(pPropertyName, PROPERTY_GRAVITY) == 0) {
-        ((CCParticleSystemQuad *)pNode)->setGravity(pPoint * pCCBReader->getResolutionScale());
+        pPoint.x *= pCCBReader->getResolutionScale();
+        pPoint.y *= pCCBReader->getResolutionScale();
+        ((CCParticleSystemQuad *)pNode)->setGravity(pPoint);
     } else {
         CCNodeLoader::onHandlePropTypePoint(pNode, pParent, pPropertyName, pPoint, pCCBReader);
     }
