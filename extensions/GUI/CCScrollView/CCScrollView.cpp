@@ -27,7 +27,7 @@
 
 NS_CC_EXT_BEGIN
 
-#define SCROLL_DEACCEL_RATE  0.95f
+#define SCROLL_DEACCEL_RATE  0.9f
 #define SCROLL_DEACCEL_DIST  1.0f
 #define BOUNCE_DURATION      0.15f
 #define INSET_RATIO          0.2f
@@ -398,13 +398,24 @@ void CCScrollView::deaccelerateScrolling(float dt)
     m_tScrollDistance     = ccpSub(m_tScrollDistance, ccp(newX - m_pContainer->getPosition().x, newY - m_pContainer->getPosition().y));
     m_tScrollDistance     = ccpMult(m_tScrollDistance, SCROLL_DEACCEL_RATE);
     this->setContentOffset(ccp(newX,newY));
-    
-    if ((fabsf(m_tScrollDistance.x) <= SCROLL_DEACCEL_DIST &&
-         fabsf(m_tScrollDistance.y) <= SCROLL_DEACCEL_DIST) ||
-        newY > maxInset.y || newY < minInset.y ||
-        newX > maxInset.x || newX < minInset.x ||
-        newX == maxInset.x || newX == minInset.x ||
-        newY == maxInset.y || newY == minInset.y)
+
+    // Screll Deacceleration WIP
+    if (fabsf(m_tScrollDistance.x) <= SCROLL_DEACCEL_DIST && fabsf(m_tScrollDistance.y) <= SCROLL_DEACCEL_DIST)
+    {
+        this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
+        this->relocateContainer(true);
+    }
+    else if (m_eDirection == kCCScrollViewDirectionVertical && (newY >= maxInset.y || newY <= minInset.y))
+    {
+        this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
+        this->relocateContainer(true);
+    }
+    else if (m_eDirection == kCCScrollViewDirectionHorizontal && (newX >= maxInset.x || newX <= minInset.x))
+    {
+        this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
+        this->relocateContainer(true);
+    }
+    else if (m_eDirection == kCCScrollViewDirectionBoth && ((newY >= maxInset.y || newY <= minInset.y) && (newX >= maxInset.x || newX <= minInset.x)))
     {
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
