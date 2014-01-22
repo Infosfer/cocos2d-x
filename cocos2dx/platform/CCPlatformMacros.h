@@ -226,6 +226,16 @@ public: virtual void set##funName(varType var)   \
 #define CCLOGWARN(...) __CCLOGWITHFUNCTION(__VA_ARGS__)
 #endif // COCOS2D_DEBUG
 
+#if !defined(COCOS2D_PARTICLE_DEBUG) || COCOS2D_PARTICLE_DEBUG == 0
+#define CCLOGPARTICLE(...)              do {} while (0)
+
+#elif COCOS2D_PARTICLE_DEBUG == 1
+#define CCLOGPARTICLE(format, ...)      cocos2d::CCLog(format, ##__VA_ARGS__)
+
+#elif COCOS2D_PARTICLE_DEBUG > 1
+#define CCLOGPARTICLE(format, ...)      cocos2d::CCLog(format, ##__VA_ARGS__)
+#endif // COCOS2D_PARTICLE_DEBUG
+
 // Lua engine debug
 #if !defined(COCOS2D_DEBUG) || COCOS2D_DEBUG == 0 || CC_LUA_ENGINE_DEBUG == 0
 #define LUALOG(...)
