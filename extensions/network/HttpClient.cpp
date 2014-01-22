@@ -243,6 +243,12 @@ static bool configureCURL(CURL *handle)
     if (code != CURLE_OK) {
         return false;
     }
+    
+    code = curl_easy_setopt(handle, CURLOPT_NOSIGNAL, 1L);
+    if (code != CURLE_OK) {
+        return false;
+    }
+    
     code = curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, CCHttpClient::getInstance()->getTimeoutForConnect());
     if (code != CURLE_OK) {
         return false;
