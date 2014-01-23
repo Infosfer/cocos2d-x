@@ -974,6 +974,13 @@ static BOOL _mixerRateSet = NO;
   if (!functioning_) {
       return;
   }
+    
+  ALint state;
+  alGetSourcei(sourceId, AL_SOURCE_STATE, &state);
+  if (state != AL_PLAYING) {
+    return;
+  }
+    
   alSourcePause(sourceId);
   alGetError();//Clear error in case we pause any sounds that couldn't be paused
 }
