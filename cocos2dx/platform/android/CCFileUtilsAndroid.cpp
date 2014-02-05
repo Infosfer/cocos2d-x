@@ -25,6 +25,8 @@ THE SOFTWARE.
 #include "support/zip_support/ZipUtils.h"
 #include "platform/CCCommon.h"
 #include "jni/Java_org_cocos2dx_lib_Cocos2dxHelper.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
