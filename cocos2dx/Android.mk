@@ -60,7 +60,9 @@ keypad_dispatcher/CCKeypadDelegate.cpp \
 keypad_dispatcher/CCKeypadDispatcher.cpp \
 label_nodes/CCLabelAtlas.cpp \
 label_nodes/CCLabelBMFont.cpp \
+label_nodes/CCLabelBMFontv2.cpp \
 label_nodes/CCLabelTTF.cpp \
+label_nodes/CCLabelTTFv2.cpp \
 layers_scenes_transitions_nodes/CCLayer.cpp \
 layers_scenes_transitions_nodes/CCScene.cpp \
 layers_scenes_transitions_nodes/CCTransitionPageTurn.cpp \
@@ -76,6 +78,7 @@ particle_nodes/CCParticleExamples.cpp \
 particle_nodes/CCParticleSystem.cpp \
 particle_nodes/CCParticleBatchNode.cpp \
 particle_nodes/CCParticleSystemQuad.cpp \
+particle_nodes/CCParticleSystemQuadv2.cpp \
 platform/CCImageCommonWebp.cpp \
 platform/CCSAXParser.cpp \
 platform/CCThread.cpp \

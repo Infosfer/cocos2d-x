@@ -11,7 +11,9 @@ CCBReader/CCBReader.cpp \
 CCBReader/CCControlButtonLoader.cpp \
 CCBReader/CCControlLoader.cpp \
 CCBReader/CCLabelBMFontLoader.cpp \
+CCBReader/CCLabelBMFontv2Loader.cpp \
 CCBReader/CCLabelTTFLoader.cpp \
+CCBReader/CCLabelTTFv2Loader.cpp \
 CCBReader/CCLayerColorLoader.cpp \
 CCBReader/CCLayerGradientLoader.cpp \
 CCBReader/CCLayerLoader.cpp \
@@ -20,6 +22,7 @@ CCBReader/CCMenuItemLoader.cpp \
 CCBReader/CCNodeLoader.cpp \
 CCBReader/CCNodeLoaderLibrary.cpp \
 CCBReader/CCParticleSystemQuadLoader.cpp \
+CCBReader/CCParticleSystemQuadv2Loader.cpp \
 CCBReader/CCScale9SpriteLoader.cpp \
 CCBReader/CCScrollViewLoader.cpp \
 CCBReader/CCSpriteLoader.cpp \
