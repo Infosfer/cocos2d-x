@@ -56,7 +56,6 @@ private:
 	void						updateTexture();
 
 private:
-	CCString*					_string;
 	CCLabelBMFont*				_helperLabel;
 	CCTextAlignment				_horizontalAlignment;
 	CCVerticalTextAlignment		_verticalAlignment;

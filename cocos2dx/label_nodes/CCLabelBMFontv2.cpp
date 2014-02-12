@@ -8,7 +8,7 @@ CCLabelBMFontv2::CCLabelBMFontv2()
 
 CCLabelBMFontv2::~CCLabelBMFontv2()
 {
-
+    CC_SAFE_RELEASE_NULL(_helperLabel);
 }
 
 CCLabelBMFontv2 * CCLabelBMFontv2::create() {
