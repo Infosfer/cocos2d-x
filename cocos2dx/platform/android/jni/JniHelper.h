@@ -40,15 +40,25 @@ typedef struct JniMethodInfo_
 class CC_DLL JniHelper
 {
 public:
+	static bool getEnv(JNIEnv **env);
     static JavaVM* getJavaVM();
     static void setJavaVM(JavaVM *javaVM);
+	
+    static jobject getJavaVMClassLoader();	
+    static jmethodID getJavaVMFindClassMethod();
+	
     static jclass getClassID(const char *className, JNIEnv *env=0);
     static bool getStaticMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode);
     static bool getMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode);
     static std::string jstring2string(jstring str);
 
 private:
+    static void setJavaVMClassLoader(jobject classLoader);
+    static void setJavaVMFindClassMethod(jmethodID findClassMethod);
+	
     static JavaVM *m_psJavaVM;
+	static jobject m_classLoader;
+	static jmethodID m_findClassMethod;	
 };
 
 NS_CC_END

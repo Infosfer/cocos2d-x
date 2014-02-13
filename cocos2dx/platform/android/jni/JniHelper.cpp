@@ -36,63 +36,12 @@ THE SOFTWARE.
 
 using namespace std;
 
-extern "C"
-{
 
+extern "C"
+{	
     //////////////////////////////////////////////////////////////////////////
     // java vm helper function
-    //////////////////////////////////////////////////////////////////////////
-
-    static bool getEnv(JNIEnv **env)
-    {
-        bool bRet = false;
-
-        do 
-        {
-            if (JAVAVM->GetEnv((void**)env, JNI_VERSION_1_4) != JNI_OK)
-            {
-                LOGD("Failed to get the environment using GetEnv()");
-                break;
-            }
-
-            if (JAVAVM->AttachCurrentThread(env, 0) < 0)
-            {
-                LOGD("Failed to get the environment using AttachCurrentThread()");
-                break;
-            }
-
-            bRet = true;
-        } while (0);        
-
-        return bRet;
-    }
-
-    static jclass getClassID_(const char *className, JNIEnv *env)
-    {
-        JNIEnv *pEnv = env;
-        jclass ret = 0;
-
-        do 
-        {
-            if (! pEnv)
-            {
-                if (! getEnv(&pEnv))
-                {
-                    break;
-                }
-            }
-            
-            ret = pEnv->FindClass(className);
-            if (! ret)
-            {
-                 LOGD("Failed to find class of %s", className);
-                break;
-            }
-        } while (0);
-
-        return ret;
-    }
-
+    //////////////////////////////////////////////////////////////////////////	
     static bool getStaticMethodInfo_(cocos2d::JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode)
     {
         jmethodID methodID = 0;
@@ -101,17 +50,15 @@ extern "C"
 
         do 
         {
-            if (! getEnv(&pEnv))
+            if (!cocos2d::JniHelper::getEnv(&pEnv))
             {
                 break;
             }
 
-            jclass classID = getClassID_(className, pEnv);
-
+            jclass classID = cocos2d::JniHelper::getClassID(className, pEnv);
             methodID = pEnv->GetStaticMethodID(classID, methodName, paramCode);
             if (! methodID)
             {
-                LOGD("Failed to find static method id of %s", methodName);
                 break;
             }
 
@@ -133,17 +80,16 @@ extern "C"
 
         do 
         {
-            if (! getEnv(&pEnv))
+            if (!cocos2d::JniHelper::getEnv(&pEnv))
             {
                 break;
             }
 
-            jclass classID = getClassID_(className, pEnv);
+            jclass classID = cocos2d::JniHelper::getClassID(className, pEnv);
 
             methodID = pEnv->GetMethodID(classID, methodName, paramCode);
             if (! methodID)
             {
-                LOGD("Failed to find method id of %s", methodName);
                 break;
             }
 
@@ -166,7 +112,7 @@ extern "C"
         
         JNIEnv *env = 0;
 
-        if (! getEnv(&env))
+        if (!cocos2d::JniHelper::getEnv(&env))
         {
             return 0;
         }
@@ -182,34 +128,80 @@ extern "C"
 NS_CC_BEGIN
 
 JavaVM* JniHelper::m_psJavaVM = NULL;
+jobject JniHelper::m_classLoader = NULL;
+jmethodID JniHelper::m_findClassMethod = NULL;	
+
+bool JniHelper::getEnv(JNIEnv **env)
+{
+    int status = JAVAVM->GetEnv((void**)env, JNI_VERSION_1_4);
+    if(status < 0) {    
+        status = JAVAVM->AttachCurrentThread(env, NULL);
+        if(status < 0) {        
+            return false;
+        }
+    }
+    return true;
+}
 
 JavaVM* JniHelper::getJavaVM()
 {
     return m_psJavaVM;
 }
 
-void JniHelper::setJavaVM(JavaVM *javaVM)
-{
+void JniHelper::setJavaVM(JavaVM *javaVM) {
     m_psJavaVM = javaVM;
+		
+    JNIEnv *env;
+	
+	getEnv(&env);
+	
+    //replace with one of your classes in the line below 
+    auto randomClass = env->FindClass("org/cocos2dx/lib/Cocos2dxActivity");
+    auto classClass = env->FindClass("java/lang/Class");
+    auto classLoaderClass = env->FindClass("java/lang/ClassLoader");
+    auto getClassLoaderMethod = env->GetMethodID(classClass, "getClassLoader", "()Ljava/lang/ClassLoader;");
+											 
+    setJavaVMClassLoader(env->CallObjectMethod(randomClass, getClassLoaderMethod));
+    setJavaVMFindClassMethod(env->GetMethodID(classLoaderClass, "findClass", "(Ljava/lang/String;)Ljava/lang/Class;"));
 }
 
-jclass JniHelper::getClassID(const char *className, JNIEnv *env)
-{
-    return getClassID_(className, env);
+jobject JniHelper::getJavaVMClassLoader() {
+	return m_classLoader;
 }
 
-bool JniHelper::getStaticMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode)
-{
+void JniHelper::setJavaVMClassLoader(jobject classLoader) {	
+    JNIEnv *pEnv = 0;
+    cocos2d::JniHelper::getEnv(&pEnv);	
+	m_classLoader = pEnv->NewGlobalRef(classLoader);
+}
+
+jmethodID JniHelper::getJavaVMFindClassMethod() {
+	return m_findClassMethod;
+}
+
+void JniHelper::setJavaVMFindClassMethod(jmethodID findClassMethod) {
+	m_findClassMethod = findClassMethod;
+}
+
+jclass JniHelper::getClassID(const char *className, JNIEnv *env) {	
+	if (!env) {
+		if (!cocos2d::JniHelper::getEnv(&env)) {
+        	return NULL;
+    	}	
+	}
+	
+	return static_cast<jclass>(env->CallObjectMethod(getJavaVMClassLoader(), getJavaVMFindClassMethod(), env->NewStringUTF(className)));
+}
+
+bool JniHelper::getStaticMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode) {
     return getStaticMethodInfo_(methodinfo, className, methodName, paramCode);
 }
 
-bool JniHelper::getMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode)
-{
+bool JniHelper::getMethodInfo(JniMethodInfo &methodinfo, const char *className, const char *methodName, const char *paramCode) {
     return getMethodInfo_(methodinfo, className, methodName, paramCode);
 }
 
-string JniHelper::jstring2string(jstring str)
-{
+string JniHelper::jstring2string(jstring str) {
     return jstring2string_(str);
 }
 
