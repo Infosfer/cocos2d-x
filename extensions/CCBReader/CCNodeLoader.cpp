@@ -905,6 +905,7 @@ CCNode * CCNodeLoader::parsePropTypeCCBFile(CCNode * pNode, CCNode * pParent, CC
     
 	CCSprite* seqCompletedActionTarget  = CCSprite::create();
 	seqCompletedActionTarget->setTag(1000);
+    seqCompletedActionTarget->setVisible(false);
 	ccbFileNode->addChild(seqCompletedActionTarget);
 
     if (ccbFileNode && ccbReader->getAnimationManager()->getAutoPlaySequenceId() != -1)

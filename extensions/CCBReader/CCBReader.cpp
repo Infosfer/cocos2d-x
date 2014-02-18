@@ -358,6 +358,7 @@ CCNode* CCBReader::readFileWithCleanUp(bool bCleanUp, CCDictionary* am)
 
 	CCSprite* seqCompletedActionTarget  = CCSprite::create();
 	seqCompletedActionTarget->setTag(1000);
+    seqCompletedActionTarget->setVisible(false);
 	pNode->addChild(seqCompletedActionTarget);
 
     mActionManagers->setObject(mActionManager, intptr_t(pNode));
