@@ -159,7 +159,7 @@ int base64Decode(const unsigned char *in, unsigned int inLength, unsigned char *
 }
 
 int base64Encode(const unsigned char *in, unsigned int inLength, char **out) {
-    unsigned int outLength = inLength * 4 / 3 + (inLength % 3 > 0 ? 4 : 0);
+    unsigned int outLength = ((inLength * 4) / 3) + (inLength / 96) + 6;
     
     //should be enough to store 8-bit buffers in 6-bit buffers
     *out = new char[outLength+1];
