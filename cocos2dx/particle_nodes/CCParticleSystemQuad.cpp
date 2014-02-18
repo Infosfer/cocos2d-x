@@ -100,6 +100,7 @@ CCParticleSystemQuad::~CCParticleSystemQuad()
         glDeleteBuffers(2, &m_pBuffersVBO[0]);
 #if CC_TEXTURE_ATLAS_USE_VAO
         glDeleteVertexArrays(1, &m_uVAOname);
+        ccGLBindVAO(0);
 #endif
     }
     
@@ -481,7 +482,8 @@ void CCParticleSystemQuad::setupVBOandVAO()
     // clean VAO
     glDeleteBuffers(2, &m_pBuffersVBO[0]);
     glDeleteVertexArrays(1, &m_uVAOname);
-
+    ccGLBindVAO(0);
+    
     CCLOGPARTICLE("CCParticleSystemQuad ALLOC VERTEX ARRAYS %p", this);
     glGenVertexArrays(1, &m_uVAOname);
     ccGLBindVAO(m_uVAOname);
@@ -613,6 +615,7 @@ void CCParticleSystemQuad::setBatchNode(CCParticleBatchNode * batchNode)
             glDeleteBuffers(2, &m_pBuffersVBO[0]);
 #if CC_TEXTURE_ATLAS_USE_VAO
             glDeleteVertexArrays(1, &m_uVAOname);
+            ccGLBindVAO(0);            
 #endif
         }
     }

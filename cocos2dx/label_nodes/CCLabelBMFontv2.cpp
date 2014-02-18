@@ -8,7 +8,6 @@ CCLabelBMFontv2::CCLabelBMFontv2()
 
 CCLabelBMFontv2::~CCLabelBMFontv2()
 {
-    CC_SAFE_RELEASE_NULL(_helperLabel);
 }
 
 CCLabelBMFontv2 * CCLabelBMFontv2::create() {
@@ -30,7 +29,6 @@ bool CCLabelBMFontv2::init() {
 	_fontScale = 1;
 
 	_helperLabel = CCLabelBMFont::create();
-    _helperLabel->retain();
 	_helperLabel->ignoreAnchorPointForPosition(true);
 	_helperLabel->setAnchorPoint(CCPointMake(0,0));
     ccBlendFunc bldFunc = {CC_BLEND_SRC, CC_BLEND_DST};
