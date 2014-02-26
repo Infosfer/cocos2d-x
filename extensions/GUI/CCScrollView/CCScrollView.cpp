@@ -30,7 +30,7 @@ NS_CC_EXT_BEGIN
 #define SCROLL_DEACCEL_RATE  0.9f
 #define SCROLL_DEACCEL_DIST  1.0f
 #define BOUNCE_DURATION      0.15f
-#define INSET_RATIO          0.2f
+#define INSET_RATIO          0.05f
 #define MOVE_INCH            7.0f/160.0f
 
 static float convertDistanceFromPointToInch(float pointDis)
@@ -399,24 +399,27 @@ void CCScrollView::deaccelerateScrolling(float dt)
     m_tScrollDistance     = ccpMult(m_tScrollDistance, SCROLL_DEACCEL_RATE);
     this->setContentOffset(ccp(newX,newY));
 
-    // Screll Deacceleration WIP
-    if (fabsf(m_tScrollDistance.x) <= SCROLL_DEACCEL_DIST && fabsf(m_tScrollDistance.y) <= SCROLL_DEACCEL_DIST)
+    if (m_eDirection == kCCScrollViewDirectionVertical && (newY >= maxInset.y || newY <= minInset.y))
     {
-        this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
-        this->relocateContainer(true);
-    }
-    else if (m_eDirection == kCCScrollViewDirectionVertical && (newY >= maxInset.y || newY <= minInset.y))
-    {
+        CCLOG("CCScrollView::cond1");
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
     }
     else if (m_eDirection == kCCScrollViewDirectionHorizontal && (newX >= maxInset.x || newX <= minInset.x))
     {
+        CCLOG("CCScrollView::cond2");
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
     }
     else if (m_eDirection == kCCScrollViewDirectionBoth && ((newY >= maxInset.y || newY <= minInset.y) && (newX >= maxInset.x || newX <= minInset.x)))
     {
+        CCLOG("CCScrollView::cond3");
+        this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
+        this->relocateContainer(true);
+    }
+    else if (fabsf(m_tScrollDistance.x) <= SCROLL_DEACCEL_DIST && fabsf(m_tScrollDistance.y) <= SCROLL_DEACCEL_DIST)
+    {
+        CCLOG("CCScrollView::cond4");
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
     }
@@ -658,7 +661,7 @@ void CCScrollView::ccTouchMoved(CCTouch* touch, CCEvent* event)
     {
         if (m_pTouches->count() == 1 && m_bDragging)
         { // scrolling
-            CCPoint moveDistance, newPoint, maxInset, minInset;
+            CCPoint moveDistance, newPoint;
             CCRect  frame;
             float newX, newY;
             
@@ -700,18 +703,19 @@ void CCScrollView::ccTouchMoved(CCTouch* touch, CCEvent* event)
                 switch (m_eDirection)
                 {
                     case kCCScrollViewDirectionVertical:
-                        moveDistance = ccp(0.0f, moveDistance.y);
+                        moveDistance.x = 0.0f;
                         break;
                     case kCCScrollViewDirectionHorizontal:
-                        moveDistance = ccp(moveDistance.x, 0.0f);
+                        moveDistance.y = 0.0f;
                         break;
                     default:
                         break;
                 }
-                
-                maxInset = m_fMaxInset;
-                minInset = m_fMinInset;
 
+                if (m_bBounceable) {
+                    calculateElasticity(moveDistance);
+                }
+                
                 newX     = m_pContainer->getPosition().x + moveDistance.x;
                 newY     = m_pContainer->getPosition().y + moveDistance.y;
 
@@ -789,6 +793,23 @@ CCRect CCScrollView::getViewRect()
     }
 
     return CCRectMake(screenPos.x, screenPos.y, m_tViewSize.width*scaleX, m_tViewSize.height*scaleY);
+}
+
+void CCScrollView::calculateElasticity(CCPoint& moveDistance) {
+    const CCPoint minOffset = this->minContainerOffset();
+    const CCPoint maxOffset = this->maxContainerOffset();
+
+    const float elasticity = 0.75f;
+
+    CCPoint offset = ccpAdd(m_pContainer->getPosition(), moveDistance);
+
+    if (offset.x < minOffset.x || offset.x > maxOffset.x) {
+        moveDistance.x *= (1.0f - elasticity);
+    }
+
+    if (offset.y < minOffset.y || offset.y > maxOffset.y) {
+        moveDistance.y *= (1.0f - elasticity);
+    }
 }
 
 NS_CC_EXT_END
