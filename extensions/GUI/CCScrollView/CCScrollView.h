@@ -237,6 +237,8 @@ private:
      */
     void handleZoom();
 
+    void calculateElasticity(CCPoint& moveDistance);
+
 protected:
     CCRect getViewRect();
     
