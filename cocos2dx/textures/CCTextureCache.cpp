@@ -856,6 +856,7 @@ void VolatileTexture::reloadAllTextures()
                 else if (std::string::npos != lowerCase.find(".pkm"))
                 {
                     vt->texture->initWithETCFile(vt->m_strFileName.c_str());
+					vt->texture->initWithETCFile(vt->m_strFileName.c_str());
                 } 
                 else
                 {
