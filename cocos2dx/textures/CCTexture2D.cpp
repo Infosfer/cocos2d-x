@@ -40,7 +40,11 @@ THE SOFTWARE.
 #include "support/ccUtils.h"
 #include "platform/CCPlatformMacros.h"
 #include "textures/CCTexturePVR.h"
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "textures/CCTextureETC.h"
+#endif
+
 #include "CCDirector.h"
 #include "shaders/CCGLProgram.h"
 #include "shaders/ccGLStateCache.h"
@@ -464,7 +468,7 @@ bool CCTexture2D::initWithString(const char *text, const char *fontName, float f
     
     #if CC_ENABLE_CACHE_TEXTURE_DATA
         // cache the texture data
-        VolatileTexture::addStringTexture(this, text, dimensions, hAlignment, vAlignment, fontName, fontSize);
+        VolatileTexture::addStringTexture(this, text, textDefinition->m_dimensions, textDefinition->m_alignment, textDefinition->m_vertAlignment, textDefinition->m_fontName.c_str(), textDefinition->m_fontSize);
     #endif
         
         bool bRet = false;
@@ -515,7 +519,7 @@ bool CCTexture2D::initWithString(const char *text, ccFontDefinition *textDefinit
     
     #if CC_ENABLE_CACHE_TEXTURE_DATA
         // cache the texture data
-        VolatileTexture::addStringTexture(this, text, dimensions, hAlignment, vAlignment, fontName, fontSize);
+        VolatileTexture::addStringTexture(this, text, textDefinition->m_dimensions, textDefinition->m_alignment, textDefinition->m_vertAlignment, textDefinition->m_fontName.c_str(), textDefinition->m_fontSize);
     #endif
         
         bool bRet = false;
@@ -723,16 +727,19 @@ bool CCTexture2D::initWithPVRFile(const char* file)
     return bRet;
 }
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 bool CCTexture2D::initWithETCFile(const char* file)
 {
     bool bRet = false;
     // nothing to do with CCObject::init
     
     CCTextureETC *etc = new CCTextureETC;
-    bRet = etc->initWithFile(file);
+    bRet = etc->initWithContentsOfFile(file);
     
     if (bRet)
     {
+        etc->setRetainName(true); // don't dealloc texture on release
+        
         m_uName = etc->getName();
         m_fMaxS = 1.0f;
         m_fMaxT = 1.0f;
@@ -750,6 +757,7 @@ bool CCTexture2D::initWithETCFile(const char* file)
     
     return bRet;
 }
+#endif
 
 void CCTexture2D::PVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied)
 {
@@ -807,7 +815,7 @@ void CCTexture2D::setAliasTexParameters()
 
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 #if CC_ENABLE_CACHE_TEXTURE_DATA
-    ccTexParams texParams = {m_bHasMipmaps?GL_NEAREST_MIPMAP_NEAREST:GL_NEAREST,GL_NEAREST,GL_NONE,GL_NONE};
+    ccTexParams texParams = {m_bHasMipmaps?(GLuint)GL_NEAREST_MIPMAP_NEAREST:(GLuint)GL_NEAREST,GL_NEAREST,GL_NONE,GL_NONE};
     VolatileTexture::setTexParameters(this, &texParams);
 #endif
 }
@@ -827,7 +835,7 @@ void CCTexture2D::setAntiAliasTexParameters()
 
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 #if CC_ENABLE_CACHE_TEXTURE_DATA
-    ccTexParams texParams = {m_bHasMipmaps?GL_LINEAR_MIPMAP_NEAREST:GL_LINEAR,GL_LINEAR,GL_NONE,GL_NONE};
+    ccTexParams texParams = {m_bHasMipmaps?(GLuint)GL_LINEAR_MIPMAP_NEAREST:(GLuint)GL_LINEAR,GL_LINEAR,GL_NONE,GL_NONE};
     VolatileTexture::setTexParameters(this, &texParams);
 #endif
 }

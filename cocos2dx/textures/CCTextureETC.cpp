@@ -1,147 +1,146 @@
-/****************************************************************************
- Copyright (c) 2013 cocos2d-x.org
- 
- http://www.cocos2d-x.org
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
+#include "CCTexture2D.h"
 #include "CCTextureETC.h"
-#include "platform/CCPlatformConfig.h"
+#include "ccMacros.h"
+#include "CCConfiguration.h"
+#include "support/ccUtils.h"
+#include "CCStdC.h"
+#include "etc1.h"
 #include "platform/CCFileUtils.h"
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-#include "platform/android/jni/JniHelper.h"
-#endif
-
+#include "shaders/ccGLStateCache.h"
+#include <ctype.h>
 
 NS_CC_BEGIN
 
 CCTextureETC::CCTextureETC()
-: _name(0)
-, _width(0)
-, _height(0)
-{}
+: m_uWidth(0)
+, m_uHeight(0)
+, m_uName(0)
+, m_bHasAlpha(false)
+, m_bRetainName(false)
+{
+}
 
 CCTextureETC::~CCTextureETC()
 {
-}
-
-bool CCTextureETC::initWithFile(const char *file)
-{
-    // Only Android supports ETC file format
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    bool ret = loadTexture(CCFileUtils::sharedFileUtils()->fullPathForFilename(file).c_str());
-    return ret;
-#else
-    return false;
-#endif
-}
-
-unsigned int CCTextureETC::getName() const
-{
-    return _name;
-}
-
-unsigned int CCTextureETC::getWidth() const
-{
-    return _width;
-}
-
-unsigned int CCTextureETC::getHeight() const
-{
-    return _height;
-}
-
-// Call back function for java
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-#define  LOG_TAG    "CCTextureETC.cpp"
-#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
-
-static unsigned int sWidth = 0;
-static unsigned int sHeight = 0;
-static unsigned char *sData = NULL;
-static unsigned int sLength = 0;
-
-extern "C"
-{
-    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxETCLoader_nativeSetTextureInfo(JNIEnv* env, jobject thiz, jint width, jint height, jbyteArray data, jint dataLength)
+    if (m_uName != 0 && ! m_bRetainName)
     {
-        sWidth = (unsigned int)width;
-        sHeight = (unsigned int)height;
-        sLength = dataLength;
-        sData = new unsigned char[sLength];
-        env->GetByteArrayRegion(data, 0, sLength, (jbyte*)sData);
+        ccGLDeleteTexture(m_uName);
     }
 }
-#endif
 
-bool CCTextureETC::loadTexture(const char* file)
+bool CCTextureETC::unpackETCData(unsigned char* data, unsigned int len)
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    JniMethodInfo t;
-    if (JniHelper::getStaticMethodInfo(t, "org/cocos2dx/lib/Cocos2dxETCLoader", "loadTexture", "(Ljava/lang/String;)Z"))
+    const etc1_byte* header = static_cast<const etc1_byte*>(data);
+    
+    //check the data
+    if(!etc1_pkm_is_valid(header))
     {
-        jstring stringArg1 = t.env->NewStringUTF(file);
-        jboolean ret = t.env->CallStaticBooleanMethod(t.classID, t.methodID, stringArg1);
+        return  false;
+    }
+    
+    m_uWidth = etc1_pkm_get_width(header);
+    m_uHeight = etc1_pkm_get_height(header);
+    
+    if( 0 == m_uWidth || 0 == m_uHeight )
+    {
+        return false;
+    }
+    
+    m_bHasAlpha = false;
+    
+    m_asMipmaps[0].address = data + ETC_PKM_HEADER_SIZE;
+    m_asMipmaps[0].len = len - ETC_PKM_HEADER_SIZE;
+	
+    return true;
+}
+
+bool CCTextureETC::createGLTexture()
+{
+    unsigned int width = m_uWidth;
+    unsigned int height = m_uHeight;
+    GLenum err;
+    
+    if (m_uName != 0)
+    {
+        ccGLDeleteTexture(m_uName);
+    }
+    
+    glGenTextures(1, &m_uName);
+    ccGLBindTexture2D(m_uName);
+    
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    CHECK_GL_ERROR_DEBUG(); // clean possible GL error
+    
+	unsigned char *data = m_asMipmaps[0].address;
+	GLsizei datalen = m_asMipmaps[0].len;
+    
+	glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, width, height, 0, datalen, data);
+    
+	err = glGetError();
+	if (err != GL_NO_ERROR)
+	{
+		CCLOG("cocos2d: TextureETC: Error uploading compressed texture level: %u . glError: 0x%04X", i, err);
+		return false;
+	}
         
-        t.env->DeleteLocalRef(stringArg1);
-        t.env->DeleteLocalRef(t.classID);
-        
-        if (ret)
+    return true;
+}
+
+
+bool CCTextureETC::initWithContentsOfFile(const char* path)
+{
+    unsigned char* etcdata = NULL;
+    int etclen = 0;
+    
+    etcdata = CCFileUtils::sharedFileUtils()->getFileData(path, "rb", (unsigned long *)(&etclen));
+    
+    if (etclen < 0)
+    {
+        this->release();
+        return false;
+    }
+    
+    m_uName = 0;
+    m_uWidth = m_uHeight = 0;
+    m_bHasAlpha = false;
+
+    m_bRetainName = false; // cocos2d integration
+
+    if (! (unpackETCData(etcdata, etclen) && createGLTexture()) )
+    {
+        CC_SAFE_DELETE_ARRAY(etcdata);
+        this->release();
+        return false;
+    }
+
+    CC_SAFE_DELETE_ARRAY(etcdata);
+    
+    return true;
+}
+
+CCTextureETC * CCTextureETC::create(const char* path)
+{
+    CCTextureETC * pTexture = new CCTextureETC();
+    if (pTexture)
+    {
+        if (pTexture->initWithContentsOfFile(path))
         {
-            _width = sWidth;
-            _height = sHeight;
-            
-            
-            glGenTextures(1, &_name);
-            glBindTexture(GL_TEXTURE_2D, _name);
-            
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            
-            glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_ETC1_RGB8_OES, _width, _height, 0, sLength, sData);
-            
-            glBindTexture(GL_TEXTURE_2D, 0);
-            
-            delete [] sData;
-            sData = NULL;
-            
-            GLenum err = glGetError();
-            if (err != GL_NO_ERROR)
-            {
-                LOGD("width %d, height %d, lenght %d", _width, _height, sLength);
-                LOGD("cocos2d: TextureETC: Error uploading compressed texture %s glError: 0x%04X", file, err);
-                return false;
-            }
-            
-            return true;
+            pTexture->autorelease();
         }
         else
         {
-            return false;
+            delete pTexture;
+            pTexture = NULL;
         }
     }
-#else
-    return false;
-#endif
+
+    return pTexture;
 }
 
 NS_CC_END
+

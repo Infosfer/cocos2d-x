@@ -400,11 +400,13 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
             {
                 texture = this->addPVRImage(fullpath.c_str());
             }
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
             else if (std::string::npos != lowerCase.find(".pkm"))
             {
                 // ETC1 file format, only supportted on Android
                 texture = this->addETCImage(fullpath.c_str());
             }
+#endif
             else
             {
                 CCImage::EImageFormat eImageFormat = CCImage::kFmtUnKnown;
@@ -490,6 +492,7 @@ CCTexture2D * CCTextureCache::addPVRImage(const char* path)
     return texture;
 }
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 CCTexture2D* CCTextureCache::addETCImage(const char* path)
 {
     CCAssert(path != NULL, "TextureCache: fileimage MUST not be nil");
@@ -507,6 +510,10 @@ CCTexture2D* CCTextureCache::addETCImage(const char* path)
     texture = new CCTexture2D();
     if(texture != NULL && texture->initWithETCFile(fullpath.c_str()))
     {
+#if CC_ENABLE_CACHE_TEXTURE_DATA
+        // cache the texture file name
+        VolatileTexture::addImageTexture(texture, fullpath.c_str(), CCImage::kFmtRawData);
+#endif
         m_pTextures->setObject(texture, key.c_str());
         texture->autorelease();
     }
@@ -518,6 +525,7 @@ CCTexture2D* CCTextureCache::addETCImage(const char* path)
     
     return texture;
 }
+#endif
 
 CCTexture2D* CCTextureCache::addUIImage(CCImage *image, const char *key)
 {
@@ -820,7 +828,7 @@ void VolatileTexture::reloadAllTextures()
 {
     isReloading = true;
 
-    CCLOG("reload all texture");
+	CCLOG("reload all texture");
     std::list<VolatileTexture *>::iterator iter = textures.begin();
 
     while (iter != textures.end())
@@ -837,7 +845,7 @@ void VolatileTexture::reloadAllTextures()
                     lowerCase[i] = tolower(lowerCase[i]);
                 }
 
-                if (std::string::npos != lowerCase.find(".pvr")) 
+                if (std::string::npos != lowerCase.find(".pvr"))
                 {
                     CCTexture2DPixelFormat oldPixelFormat = CCTexture2D::defaultAlphaPixelFormat();
                     CCTexture2D::setDefaultAlphaPixelFormat(vt->m_PixelFormat);
@@ -845,7 +853,11 @@ void VolatileTexture::reloadAllTextures()
                     vt->texture->initWithPVRFile(vt->m_strFileName.c_str());
                     CCTexture2D::setDefaultAlphaPixelFormat(oldPixelFormat);
                 } 
-                else 
+                else if (std::string::npos != lowerCase.find(".pkm"))
+                {
+                    vt->texture->initWithETCFile(vt->m_strFileName.c_str());
+                } 
+                else
                 {
                     CCImage* pImage = new CCImage();
                     unsigned long nSize = 0;
