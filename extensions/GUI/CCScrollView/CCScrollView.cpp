@@ -401,25 +401,21 @@ void CCScrollView::deaccelerateScrolling(float dt)
 
     if (m_eDirection == kCCScrollViewDirectionVertical && (newY >= maxInset.y || newY <= minInset.y))
     {
-        CCLOG("CCScrollView::cond1");
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
     }
     else if (m_eDirection == kCCScrollViewDirectionHorizontal && (newX >= maxInset.x || newX <= minInset.x))
     {
-        CCLOG("CCScrollView::cond2");
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
     }
     else if (m_eDirection == kCCScrollViewDirectionBoth && ((newY >= maxInset.y || newY <= minInset.y) && (newX >= maxInset.x || newX <= minInset.x)))
     {
-        CCLOG("CCScrollView::cond3");
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
     }
     else if (fabsf(m_tScrollDistance.x) <= SCROLL_DEACCEL_DIST && fabsf(m_tScrollDistance.y) <= SCROLL_DEACCEL_DIST)
     {
-        CCLOG("CCScrollView::cond4");
         this->unschedule(schedule_selector(CCScrollView::deaccelerateScrolling));
         this->relocateContainer(true);
     }
