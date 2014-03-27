@@ -164,6 +164,8 @@ const std::string& CCBReader::getCCBRootPath() const
 
 bool CCBReader::init()
 {
+    _convertRootToSprite = true;
+
     // Setup action manager
     CCBAnimationManager *pActionManager = new CCBAnimationManager();
     setAnimationManager(pActionManager);
@@ -583,7 +585,7 @@ CCNode * CCBReader::readNodeGraph(CCNode * pParent) {
         memberVarAssignmentName = this->readCachedString();
     }
 
-	if (strcmp(className.c_str(), "CCNode") == 0 || strcmp(className.c_str(), "CCLayer") == 0) {
+	if (_convertRootToSprite && (strcmp(className.c_str(), "CCNode") == 0 || strcmp(className.c_str(), "CCLayer") == 0)) {
 		className = "CCSprite";
 	}
 
