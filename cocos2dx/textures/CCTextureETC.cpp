@@ -92,9 +92,9 @@ bool CCTextureETC::createGLTexture()
 }
 
 
-bool CCTextureETC::initWithContentsOfFile(const char* path)
+bool CCTextureETC::initWithContentsOfFile(const char* path, bool isCreateGLTexture)
 {
-    unsigned char* etcdata = NULL;
+    etcdata = NULL;
     int etclen = 0;
     
     etcdata = CCFileUtils::sharedFileUtils()->getFileData(path, "rb", (unsigned long *)(&etclen));
@@ -111,7 +111,22 @@ bool CCTextureETC::initWithContentsOfFile(const char* path)
 
     m_bRetainName = false; // cocos2d integration
 
-    if (! (unpackETCData(etcdata, etclen) && createGLTexture()) )
+    if (! (unpackETCData(etcdata, etclen) && (!isCreateGLTexture || (isCreateGLTexture && createGLTexture()) ) )
+    {
+        CC_SAFE_DELETE_ARRAY(etcdata);
+        this->release();
+        return false;
+    }
+
+    if (isCreateGLTexture) {
+        CC_SAFE_DELETE_ARRAY(etcdata);
+    }
+    
+    return true;
+}
+
+bool CCTexturePVR::createGLTextureAndDeleteETCData() {
+    if (!createGLTexture())
     {
         CC_SAFE_DELETE_ARRAY(etcdata);
         this->release();
@@ -119,7 +134,7 @@ bool CCTextureETC::initWithContentsOfFile(const char* path)
     }
 
     CC_SAFE_DELETE_ARRAY(etcdata);
-    
+
     return true;
 }
 

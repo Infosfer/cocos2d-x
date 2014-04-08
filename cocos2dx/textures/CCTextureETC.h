@@ -45,7 +45,7 @@ public:
     virtual ~CCTextureETC();
 
     /** initializes a CCTextureETC with a path */
-    bool initWithContentsOfFile(const char* path);
+    bool initWithContentsOfFile(const char* path, bool isCreateGLTexture = true);
 
     /** creates and initializes a CCTextureETC with a path */
     static CCTextureETC* create(const char* path);
@@ -76,6 +76,8 @@ protected:
     
     // cocos2d integration
     bool m_bRetainName;
+
+    unsigned char* etcdata;
 };
 
 NS_CC_END

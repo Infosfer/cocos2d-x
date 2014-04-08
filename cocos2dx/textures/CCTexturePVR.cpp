@@ -611,9 +611,9 @@ bool CCTexturePVR::createGLTexture()
 }
 
 
-bool CCTexturePVR::initWithContentsOfFile(const char* path)
+bool CCTexturePVR::initWithContentsOfFile(const char* path, bool isCreateGLTexture)
 {
-    unsigned char* pvrdata = NULL;
+    pvrdata = NULL;
     int pvrlen = 0;
     
     std::string lowerCase(path);
@@ -652,7 +652,22 @@ bool CCTexturePVR::initWithContentsOfFile(const char* path)
 
     m_bRetainName = false; // cocos2d integration
 
-    if (! ((unpackPVRv2Data(pvrdata, pvrlen)  || unpackPVRv3Data(pvrdata, pvrlen)) && createGLTexture()) )
+    if (! (   (unpackPVRv2Data(pvrdata, pvrlen)  || unpackPVRv3Data(pvrdata, pvrlen))    &&   (!isCreateGLTexture || (isCreateGLTexture && createGLTexture())) ) )
+    {
+        CC_SAFE_DELETE_ARRAY(pvrdata);
+        this->release();
+        return false;
+    }
+
+    if (isCreateGLTexture) {
+        CC_SAFE_DELETE_ARRAY(pvrdata);
+    }
+    
+    return true;
+}
+
+bool CCTexturePVR::createGLTextureAndDeletePVRData() {
+    if (!createGLTexture())
     {
         CC_SAFE_DELETE_ARRAY(pvrdata);
         this->release();
@@ -660,7 +675,7 @@ bool CCTexturePVR::initWithContentsOfFile(const char* path)
     }
 
     CC_SAFE_DELETE_ARRAY(pvrdata);
-    
+
     return true;
 }
 
