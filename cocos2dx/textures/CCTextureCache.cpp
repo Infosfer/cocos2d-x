@@ -27,6 +27,11 @@ THE SOFTWARE.
 #include "CCTextureCache.h"
 #include "CCTexture2D.h"
 #include "CCTexturePVR.h"
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#include "CCTextureETC.h"
+#endif
+
 #include "ccMacros.h"
 #include "CCDirector.h"
 #include "platform/platform.h"

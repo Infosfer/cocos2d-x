@@ -111,7 +111,7 @@ bool CCTextureETC::initWithContentsOfFile(const char* path, bool isCreateGLTextu
 
     m_bRetainName = false; // cocos2d integration
 
-    if (! (unpackETCData(etcdata, etclen) && (!isCreateGLTexture || (isCreateGLTexture && createGLTexture()) ) )
+    if (! (   (unpackETCData(etcdata, etclen)                                       )    &&   (!isCreateGLTexture || (isCreateGLTexture && createGLTexture())) ) )
     {
         CC_SAFE_DELETE_ARRAY(etcdata);
         this->release();

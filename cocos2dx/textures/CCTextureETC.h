@@ -46,7 +46,8 @@ public:
 
     /** initializes a CCTextureETC with a path */
     bool initWithContentsOfFile(const char* path, bool isCreateGLTexture = true);
-
+	bool createGLTextureAndDeleteETCData();
+	
     /** creates and initializes a CCTextureETC with a path */
     static CCTextureETC* create(const char* path);
     

@@ -742,8 +742,7 @@ bool CCTexture2D::initWithETCFile(const char* file, bool isCreateGLTexture)
 {
     bool bRet = false;
     // nothing to do with CCObject::init
-    
-    etc = new CCTextureETC;
+    CCTextureETC* etc = new CCTextureETC;
     bRet = etc->initWithContentsOfFile(file, isCreateGLTexture);
     _compressedTexture = etc;
     
