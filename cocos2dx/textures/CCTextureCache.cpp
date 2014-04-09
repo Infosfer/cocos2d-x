@@ -464,9 +464,15 @@ CCTexture2D * CCTextureCache::addPVRImage(const char* path)
     CCAssert(path != NULL, "TextureCache: fileimage MUST not be nil");
 
     CCTexture2D* texture = NULL;
-    std::string key(path);
+    std::string key = path;
     
-    if( (texture = (CCTexture2D*)m_pTextures->objectForKey(key.c_str())) ) 
+    key = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
+    if (key.size() == 0)
+    {
+        return NULL;
+    }
+    
+    if( (texture = (CCTexture2D*)m_pTextures->objectForKey(key.c_str())) )
     {
         return texture;
     }
@@ -498,7 +504,13 @@ CCTexture2D* CCTextureCache::addETCImage(const char* path)
     CCAssert(path != NULL, "TextureCache: fileimage MUST not be nil");
     
     CCTexture2D* texture = NULL;
-    std::string key(path);
+    std::string key = path;
+    
+    key = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
+    if (key.size() == 0)
+    {
+        return NULL;
+    }
     
     if( (texture = (CCTexture2D*)m_pTextures->objectForKey(key.c_str())) )
     {
@@ -605,7 +617,6 @@ void CCTextureCache::removeUnusedTextures()
         list<CCDictElement*> elementToRemove;
         CCDICT_FOREACH(m_pTextures, pElement)
         {
-            CCLOG("cocos2d: CCTextureCache: texture: %s", pElement->getStrKey());
             CCTexture2D *value = (CCTexture2D*)pElement->getObject();
             if (value->retainCount() == 1)
             {
