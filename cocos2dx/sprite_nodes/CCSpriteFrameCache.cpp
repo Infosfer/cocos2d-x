@@ -393,6 +393,17 @@ void CCSpriteFrameCache::removeSpriteFramesFromTexture(CCTexture2D* texture)
     m_pSpriteFrames->removeObjectsForKeys(keysToRemove);
 }
 
+void CCSpriteFrameCache::removeTextureAndFile(CCTexture2D* texture, const char* plist) {
+    removeSpriteFramesFromTexture(texture);
+
+    // remove file from the cache
+    set<string>::iterator ret = m_pLoadedFileNames->find(plist);
+    if (ret != m_pLoadedFileNames->end())
+    {
+        m_pLoadedFileNames->erase(ret);
+    }
+}
+
 CCSpriteFrame* CCSpriteFrameCache::spriteFrameByName(const char *pszName)
 {
     CCSpriteFrame* frame = (CCSpriteFrame*)m_pSpriteFrames->objectForKey(pszName);

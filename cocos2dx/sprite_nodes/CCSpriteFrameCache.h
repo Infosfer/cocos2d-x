@@ -124,6 +124,8 @@ public:
     */
     void removeSpriteFramesFromTexture(CCTexture2D* texture);
 
+    void removeTextureAndFile(CCTexture2D* texture, const char* plist);
+
     /** Returns an Sprite Frame that was previously added.
      If the name is not found it will return nil.
      You should retain the returned copy if you are going to use it.
