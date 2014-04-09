@@ -94,7 +94,9 @@ public:
     virtual ~CCTexturePVR();
 
     /** initializes a CCTexturePVR with a path */
-    bool initWithContentsOfFile(const char* path);
+    bool initWithContentsOfFile(const char* path, bool isCreateGLTexture = true);
+
+    bool createGLTextureAndDeletePVRData();
 
     /** creates and initializes a CCTexturePVR with a path */
     static CCTexturePVR* create(const char* path);
@@ -138,7 +140,9 @@ protected:
     bool m_bRetainName;
     CCTexture2DPixelFormat m_eFormat;
     
-   const ccPVRTexturePixelFormatInfo *m_pPixelFormatInfo;
+    const ccPVRTexturePixelFormatInfo *m_pPixelFormatInfo;
+
+    unsigned char* pvrdata;
 };
 
 // end of textures group

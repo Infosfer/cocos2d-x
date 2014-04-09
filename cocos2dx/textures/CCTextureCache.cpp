@@ -26,6 +26,7 @@ THE SOFTWARE.
 
 #include "CCTextureCache.h"
 #include "CCTexture2D.h"
+#include "CCTexturePVR.h"
 #include "ccMacros.h"
 #include "CCDirector.h"
 #include "platform/platform.h"
@@ -136,24 +137,41 @@ static void* loadImage(void* data)
         }        
 
         const char *filename = pAsyncStruct->filename.c_str();
+        CCImage *pImage = NULL;
 
         // compute image type
         CCImage::EImageFormat imageType = computeImageFormatType(pAsyncStruct->filename);
         if (imageType == CCImage::kFmtUnKnown)
         {
-            CCLOG("unsupported format %s",filename);
-            delete pAsyncStruct;
-            
-            continue;
+            if ((std::string::npos != pAsyncStruct->filename.find(".pvr.ccz")) || (std::string::npos != pAsyncStruct->filename.find(".pvr")))
+            {
+                pImage = (CCImage*)CCTextureCache::sharedTextureCache()->addPVRImage(pAsyncStruct->filename.c_str(), false);
+                imageType = CCImage::kFmtRawData;
+            }
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+            else if (std::string::npos != pAsyncStruct->filename.find(".pkm"))
+            {
+                pImage = (CCImage*)CCTextureCache::sharedTextureCache()->addETCImage(pAsyncStruct->filename.c_str(), false);
+                imageType = CCImage::kFmtRawData;
+            }
+#endif
+            else {
+                CCLOG("unsupported format %s",filename);
+                delete pAsyncStruct;
+
+                continue;
+            }
         }
-        
-        // generate image            
-        CCImage *pImage = new CCImage();
-        if (pImage && !pImage->initWithImageFileThreadSafe(filename, imageType))
-        {
-            CC_SAFE_RELEASE(pImage);
-            CCLOG("can not load %s", filename);
-            continue;
+
+        if (imageType != CCImage::kFmtRawData) {
+            // generate image
+            pImage = new CCImage();
+            if (pImage && !pImage->initWithImageFileThreadSafe(filename, imageType))
+            {
+                CC_SAFE_RELEASE(pImage);
+                CCLOG("can not load %s", filename);
+                continue;
+            }
         }
 
         // generate image info
@@ -323,25 +341,43 @@ void CCTextureCache::addImageAsyncCallBack(float dt)
         pthread_mutex_unlock(&s_ImageInfoMutex);
 
         AsyncStruct *pAsyncStruct = pImageInfo->asyncStruct;
-        CCImage *pImage = pImageInfo->image;
 
         CCObject *target = pAsyncStruct->target;
         SEL_CallFuncO selector = pAsyncStruct->selector;
         const char* filename = pAsyncStruct->filename.c_str();
 
-        // generate texture in render thread
-        CCTexture2D *texture = new CCTexture2D();
-#if 0 //TODO: (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-        texture->initWithImage(pImage, kCCResolutioniPhone);
-#else
-        texture->initWithImage(pImage);
+        CCImage *pImage = NULL;
+        CCTexture2D *texture = NULL;
+
+        //if (dynamic_cast<CCTexture2D*>(pImageInfo->image)) {
+        if (pImageInfo->imageType == CCImage::kFmtRawData) {
+            texture = ((CCTexture2D*)pImageInfo->image);
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+            ((CCTexturePVR*)texture->getCompressedTexture())->createGLTextureAndDeletePVRData();
+            texture->completeWithPVRFile();
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+            ((CCTextureETC*)texture->getCompressedTexture())->createGLTextureAndDeleteETCData();
+            texture->completeWithETCFile();
 #endif
+        }
+        else {
+            pImage = pImageInfo->image;
+
+            // generate texture in render thread
+            texture = new CCTexture2D();
+#if 0 //TODO: (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+            texture->initWithImage(pImage, kCCResolutioniPhone);
+#else
+            texture->initWithImage(pImage);
+#endif
+            pImage->release();
+        }
 
 #if CC_ENABLE_CACHE_TEXTURE_DATA
-       // cache the texture file name
-       VolatileTexture::addImageTexture(texture, filename, pImageInfo->imageType);
+        // cache the texture file name
+        VolatileTexture::addImageTexture(texture, filename, pImageInfo->imageType);
 #endif
-
         // cache the texture
         m_pTextures->setObject(texture, filename);
         texture->autorelease();
@@ -352,7 +388,6 @@ void CCTextureCache::addImageAsyncCallBack(float dt)
             target->release();
         }        
 
-        pImage->release();
         delete pAsyncStruct;
         delete pImageInfo;
 
@@ -459,7 +494,7 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
     return texture;
 }
 
-CCTexture2D * CCTextureCache::addPVRImage(const char* path)
+CCTexture2D * CCTextureCache::addPVRImage(const char* path, bool isCreateGLTexture)
 {
     CCAssert(path != NULL, "TextureCache: fileimage MUST not be nil");
 
@@ -480,14 +515,16 @@ CCTexture2D * CCTextureCache::addPVRImage(const char* path)
     // Split up directory and filename
     std::string fullpath = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
     texture = new CCTexture2D();
-    if(texture != NULL && texture->initWithPVRFile(fullpath.c_str()) )
+    if(texture != NULL && texture->initWithPVRFile(fullpath.c_str(), isCreateGLTexture) )
     {
+        if (isCreateGLTexture) {
 #if CC_ENABLE_CACHE_TEXTURE_DATA
-        // cache the texture file name
-        VolatileTexture::addImageTexture(texture, fullpath.c_str(), CCImage::kFmtRawData);
+            // cache the texture file name
+            VolatileTexture::addImageTexture(texture, fullpath.c_str(), CCImage::kFmtRawData);
 #endif
-        m_pTextures->setObject(texture, key.c_str());
-        texture->autorelease();
+            m_pTextures->setObject(texture, key.c_str());
+            texture->autorelease();
+        }
     }
     else
     {
@@ -499,7 +536,7 @@ CCTexture2D * CCTextureCache::addPVRImage(const char* path)
 }
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-CCTexture2D* CCTextureCache::addETCImage(const char* path)
+CCTexture2D* CCTextureCache::addETCImage(const char* path, bool isCreateGLTexture)
 {
     CCAssert(path != NULL, "TextureCache: fileimage MUST not be nil");
     
@@ -520,14 +557,16 @@ CCTexture2D* CCTextureCache::addETCImage(const char* path)
     // Split up directory and filename
     std::string fullpath = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
     texture = new CCTexture2D();
-    if(texture != NULL && texture->initWithETCFile(fullpath.c_str()))
+    if(texture != NULL && texture->initWithETCFile(fullpath.c_str(), isCreateGLTexture))
     {
+        if (isCreateGLTexture) {
 #if CC_ENABLE_CACHE_TEXTURE_DATA
-        // cache the texture file name
-        VolatileTexture::addImageTexture(texture, fullpath.c_str(), CCImage::kFmtRawData);
+            // cache the texture file name
+            VolatileTexture::addImageTexture(texture, fullpath.c_str(), CCImage::kFmtRawData);
 #endif
-        m_pTextures->setObject(texture, key.c_str());
-        texture->autorelease();
+            m_pTextures->setObject(texture, key.c_str());
+            texture->autorelease();
+        }
     }
     else
     {

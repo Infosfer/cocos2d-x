@@ -214,7 +214,9 @@ private:
      *
      * @param dt delta
      */
-    void deaccelerateScrolling(float dt);
+protected:
+    virtual void deaccelerateScrolling(float dt);
+private:
     /**
      * This method makes sure auto scrolling causes delegate to invoke its method
      */

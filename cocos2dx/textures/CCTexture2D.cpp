@@ -75,6 +75,7 @@ CCTexture2D::CCTexture2D()
 , m_bHasPremultipliedAlpha(false)
 , m_bHasMipmaps(false)
 , m_pShaderProgram(NULL)
+, _compressedTexture(NULL)
 {
 }
 
@@ -695,29 +696,20 @@ void CCTexture2D::drawInRect(const CCRect& rect)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-bool CCTexture2D::initWithPVRFile(const char* file)
+bool CCTexture2D::initWithPVRFile(const char* file, bool isCreateGLTexture)
 {
     bool bRet = false;
     // nothing to do with CCObject::init
     
     CCTexturePVR *pvr = new CCTexturePVR;
-    bRet = pvr->initWithContentsOfFile(file);
+    bRet = pvr->initWithContentsOfFile(file, isCreateGLTexture);
+    _compressedTexture = pvr;
         
     if (bRet)
     {
-        pvr->setRetainName(true); // don't dealloc texture on release
-        
-        m_uName = pvr->getName();
-        m_fMaxS = 1.0f;
-        m_fMaxT = 1.0f;
-        m_uPixelsWide = pvr->getWidth();
-        m_uPixelsHigh = pvr->getHeight();
-        m_tContentSize = CCSizeMake((float)m_uPixelsWide, (float)m_uPixelsHigh);
-        m_bHasPremultipliedAlpha = PVRHaveAlphaPremultiplied_;
-        m_ePixelFormat = pvr->getFormat();
-        m_bHasMipmaps = pvr->getNumberOfMipmaps() > 1;       
-
-        pvr->release();
+        if (isCreateGLTexture) {
+            completeWithPVRFile();
+        }
     }
     else
     {
@@ -727,28 +719,40 @@ bool CCTexture2D::initWithPVRFile(const char* file)
     return bRet;
 }
 
+void CCTexture2D::completeWithPVRFile() {
+    CCTexturePVR *pvr = (CCTexturePVR*)_compressedTexture;
+
+    pvr->setRetainName(true); // don't dealloc texture on release
+
+    m_uName = pvr->getName();
+    m_fMaxS = 1.0f;
+    m_fMaxT = 1.0f;
+    m_uPixelsWide = pvr->getWidth();
+    m_uPixelsHigh = pvr->getHeight();
+    m_tContentSize = CCSizeMake((float)m_uPixelsWide, (float)m_uPixelsHigh);
+    m_bHasPremultipliedAlpha = PVRHaveAlphaPremultiplied_;
+    m_ePixelFormat = pvr->getFormat();
+    m_bHasMipmaps = pvr->getNumberOfMipmaps() > 1;
+
+    pvr->release();
+}
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-bool CCTexture2D::initWithETCFile(const char* file)
+bool CCTexture2D::initWithETCFile(const char* file, bool isCreateGLTexture)
 {
     bool bRet = false;
     // nothing to do with CCObject::init
     
-    CCTextureETC *etc = new CCTextureETC;
-    bRet = etc->initWithContentsOfFile(file);
+    etc = new CCTextureETC;
+    bRet = etc->initWithContentsOfFile(file, isCreateGLTexture);
+    _compressedTexture = etc;
     
     if (bRet)
     {
-        etc->setRetainName(true); // don't dealloc texture on release
-        
-        m_uName = etc->getName();
-        m_fMaxS = 1.0f;
-        m_fMaxT = 1.0f;
-        m_uPixelsWide = etc->getWidth();
-        m_uPixelsHigh = etc->getHeight();
-        m_tContentSize = CCSizeMake((float)m_uPixelsWide, (float)m_uPixelsHigh);
-        m_bHasPremultipliedAlpha = true;
-        
-        etc->release();
+        if (isCreateGLTexture)
+        {
+            completeWithETCFile();
+        }
     }
     else
     {
@@ -757,6 +761,23 @@ bool CCTexture2D::initWithETCFile(const char* file)
     
     return bRet;
 }
+
+void CCTexture2D::completeWithETCFile() {
+    CCTextureETC *etc = (CCTextureETC*)_compressedTexture;
+
+    etc->setRetainName(true); // don't dealloc texture on release
+
+    m_uName = etc->getName();
+    m_fMaxS = 1.0f;
+    m_fMaxT = 1.0f;
+    m_uPixelsWide = etc->getWidth();
+    m_uPixelsHigh = etc->getHeight();
+    m_tContentSize = CCSizeMake((float)m_uPixelsWide, (float)m_uPixelsHigh);
+    m_bHasPremultipliedAlpha = true;
+
+    etc->release();
+}
+
 #endif
 
 void CCTexture2D::PVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied)

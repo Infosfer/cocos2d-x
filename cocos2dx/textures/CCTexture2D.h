@@ -38,6 +38,7 @@ NS_CC_BEGIN
 
 class CCImage;
 
+
 /**
  * @addtogroup textures
  * @{
@@ -149,11 +150,13 @@ public:
     bool initWithString(const char *text, ccFontDefinition *textDefinition);
     
     /** Initializes a texture from a PVR file */
-    bool initWithPVRFile(const char* file);
+    bool initWithPVRFile(const char* file, bool isCreateGLTexture = true);
+    void completeWithPVRFile();
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     /** Initializes a texture from a ETC file */
-    bool initWithETCFile(const char* file);
+    bool initWithETCFile(const char* file, bool isCreateGLTexture = true);
+    void completeWithETCFile();
 #endif
 
     /** sets the min filter, mag filter, wrap s and wrap t texture parameters.
@@ -276,6 +279,8 @@ private:
 
     /** shader program used by drawAtPoint and drawInRect */
     CC_PROPERTY(CCGLProgram*, m_pShaderProgram, ShaderProgram);
+
+    CC_SYNTHESIZE_READONLY(CCObject*, _compressedTexture, CompressedTexture);
 };
 
 // end of textures group

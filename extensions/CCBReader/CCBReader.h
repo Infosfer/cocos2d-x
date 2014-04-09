@@ -201,6 +201,8 @@ private:
     bool hasScriptingOwner;    
     bool init();
 public:
+
+    CC_SYNTHESIZE(bool, _convertRootToSprite, ConvertRootToSprite);
     
     bool jsControlled;
     CCBReader(CCNodeLoaderLibrary *pCCNodeLoaderLibrary, CCBMemberVariableAssigner *pCCBMemberVariableAssigner = NULL, CCBSelectorResolver *pCCBSelectorResolver = NULL, CCNodeLoaderListener *pCCNodeLoaderListener = NULL);
