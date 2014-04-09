@@ -701,7 +701,7 @@ bool CCTexture2D::initWithPVRFile(const char* file, bool isCreateGLTexture)
     bool bRet = false;
     // nothing to do with CCObject::init
     
-    CCTexturePVR *pvr = new CCTexturePVR;
+    CCTexturePVR* pvr = new CCTexturePVR;
     bRet = pvr->initWithContentsOfFile(file, isCreateGLTexture);
     _compressedTexture = pvr;
         
