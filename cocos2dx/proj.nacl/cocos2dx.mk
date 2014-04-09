@@ -88,8 +88,8 @@ CXXFLAGS += -Wno-unknown-pragmas
 
 ifeq ($(NACL_ARCH),arm)
 # Don't warn about mangling of 'va_list' on arm builds
-CCFLAGS += -Wno-psabi
-CXXFLAGS += -Wno-psabi
+# CCFLAGS += -Wno-psabi
+# CXXFLAGS += -Wno-psabi
 endif
 
 ifdef NACL_MOUNTS
