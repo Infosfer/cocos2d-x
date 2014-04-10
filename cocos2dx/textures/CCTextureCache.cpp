@@ -506,19 +506,28 @@ CCTexture2D * CCTextureCache::addPVRImage(const char* path, bool isCreateGLTextu
     CCTexture2D* texture = NULL;
     std::string key = path;
     
-    key = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
-    if (key.size() == 0)
-    {
-        return NULL;
+    if (isCreateGLTexture) {
+        key = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
+        if (key.size() == 0)
+        {
+            return NULL;
+        }
+        
+        if( (texture = (CCTexture2D*)m_pTextures->objectForKey(key.c_str())) )
+        {
+            return texture;
+        }
+    }
+        
+    // Split up directory and filename
+    std::string fullpath;
+    if (isCreateGLTexture) {
+        fullpath = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
+    }
+    else {
+        fullpath = path;
     }
     
-    if( (texture = (CCTexture2D*)m_pTextures->objectForKey(key.c_str())) )
-    {
-        return texture;
-    }
-
-    // Split up directory and filename
-    std::string fullpath = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
     texture = new CCTexture2D();
     if(texture != NULL && texture->initWithPVRFile(fullpath.c_str(), isCreateGLTexture) )
     {
@@ -548,19 +557,28 @@ CCTexture2D* CCTextureCache::addETCImage(const char* path, bool isCreateGLTextur
     CCTexture2D* texture = NULL;
     std::string key = path;
     
-    key = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
-    if (key.size() == 0)
-    {
-        return NULL;
-    }
-    
-    if( (texture = (CCTexture2D*)m_pTextures->objectForKey(key.c_str())) )
-    {
-        return texture;
+    if (isCreateGLTexture) {
+        key = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
+        if (key.size() == 0)
+        {
+            return NULL;
+        }
+        
+        if( (texture = (CCTexture2D*)m_pTextures->objectForKey(key.c_str())) )
+        {
+            return texture;
+        }
     }
     
     // Split up directory and filename
-    std::string fullpath = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
+    std::string fullpath;
+    if (isCreateGLTexture) {
+        fullpath = CCFileUtils::sharedFileUtils()->fullPathForFilename(key.c_str());
+    }
+    else {
+        fullpath = path;
+    }
+    
     texture = new CCTexture2D();
     if(texture != NULL && texture->initWithETCFile(fullpath.c_str(), isCreateGLTexture))
     {

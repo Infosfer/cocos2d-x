@@ -33,6 +33,10 @@ THE SOFTWARE.
 #include "png.h"
 #include "jpeglib.h"
 #include "tiffio.h"
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+#include "platform/android/CCFileUtilsAndroid.h"
+#endif
+
 #include <string>
 #include <ctype.h>
 
@@ -136,7 +140,12 @@ bool CCImage::initWithImageFileThreadSafe(const char *fullpath, EImageFormat ima
 {
     bool bRet = false;
     unsigned long nSize = 0;
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    CCFileUtilsAndroid *fileUitls = (CCFileUtilsAndroid*)CCFileUtils::sharedFileUtils();
+    unsigned char *pBuffer = fileUitls->getFileDataForAsync(fullpath, "rb", &nSize);
+#else
     unsigned char *pBuffer = CCFileUtils::sharedFileUtils()->getFileData(fullpath, "rb", &nSize);
+#endif
     if (pBuffer != NULL && nSize > 0)
     {
         bRet = initWithImageData(pBuffer, nSize, imageType);
@@ -454,7 +463,7 @@ bool CCImage::_initWithPngData(void * pData, int nDatalen)
         }
 
         // read png data
-        // m_nBitsPerComponent will always be 8
+        // _bitsPerComponent will always be 8
         m_nBitsPerComponent = 8;
         png_uint_32 rowbytes;
         png_bytep* row_pointers = (png_bytep*)malloc( sizeof(png_bytep) * m_nHeight );
@@ -656,9 +665,9 @@ bool CCImage::_initWithTiffData(void* pData, int nDataLen)
                 /* the raster data is pre-multiplied by the alpha component 
                    after invoking TIFFReadRGBAImageOriented
                 unsigned char* src = (unsigned char*)raster;
-                unsigned int* tmp = (unsigned int*)m_pData;
+                unsigned int* tmp = (unsigned int*)_data;
 
-                for(int j = 0; j < m_nWidth * m_nHeight * 4; j += 4)
+                for(int j = 0; j < _width * _height * 4; j += 4)
                 {
                     *tmp++ = CC_RGB_PREMULTIPLY_ALPHA( src[j], src[j + 1], 
                         src[j + 2], src[j + 3] );

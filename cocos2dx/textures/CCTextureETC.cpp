@@ -6,6 +6,7 @@
 #include "CCStdC.h"
 #include "etc1.h"
 #include "platform/CCFileUtils.h"
+#include "platform/android/CCFileUtilsAndroid.h"
 #include "shaders/ccGLStateCache.h"
 #include <ctype.h>
 
@@ -97,7 +98,8 @@ bool CCTextureETC::initWithContentsOfFile(const char* path, bool isCreateGLTextu
     etcdata = NULL;
     int etclen = 0;
     
-    etcdata = CCFileUtils::sharedFileUtils()->getFileData(path, "rb", (unsigned long *)(&etclen));
+	CCFileUtilsAndroid *fileUtils = (CCFileUtilsAndroid*)CCFileUtils::sharedFileUtils();
+	etcdata = fileUtils->getFileDataForAsync(path, "rb", (unsigned long *)(&etclen));
     
     if (etclen < 0)
     {
