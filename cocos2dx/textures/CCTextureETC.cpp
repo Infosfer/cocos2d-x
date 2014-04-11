@@ -127,7 +127,7 @@ bool CCTextureETC::initWithContentsOfFile(const char* path, bool isCreateGLTextu
     return true;
 }
 
-bool CCTexturePVR::createGLTextureAndDeleteETCData() {
+bool CCTextureETC::createGLTextureAndDeleteETCData() {
     if (!createGLTexture())
     {
         CC_SAFE_DELETE_ARRAY(etcdata);
