@@ -33,6 +33,9 @@
 
 NS_CC_BEGIN
 
+static pthread_mutex_t     mutex;
+static pthread_mutexattr_t mutexAttr;
+
 unsigned int ZipUtils::s_uEncryptedPvrKeyParts[4] = {0,0,0,0};
 unsigned int ZipUtils::s_uEncryptionKey[1024];
 bool ZipUtils::s_bEncryptionKeyIsValid = false;
@@ -458,6 +461,10 @@ ZipFile::ZipFile(const std::string &zipFile, const std::string &filter)
 : _data(new ZipFilePrivate)
 , _dataThread(new ZipFilePrivate)
 {
+    pthread_mutexattr_init(&mutexAttr);
+	pthread_mutexattr_settype(&mutexAttr, PTHREAD_MUTEX_NORMAL);
+	pthread_mutex_init(&mutex, &mutexAttr);
+
     _data->zipFile = unzOpen(zipFile.c_str());
     _dataThread->zipFile = unzOpen(zipFile.c_str());
     if (_data->zipFile && _dataThread->zipFile)
@@ -478,6 +485,8 @@ ZipFile::~ZipFile()
     }
     CC_SAFE_DELETE(_data);
     CC_SAFE_DELETE(_dataThread);
+
+    pthread_mutex_destroy(&mutex);
 }
 
 bool ZipFile::setFilter(const std::string &filter, ZipFilePrivate *data)
@@ -556,6 +565,8 @@ unsigned char *ZipFile::getFileData(const std::string &fileName, unsigned long *
     {
         *pSize = 0;
     }
+
+    pthread_mutex_lock(&mutex);
     
     do
     {
@@ -583,6 +594,8 @@ unsigned char *ZipFile::getFileData(const std::string &fileName, unsigned long *
         }
         unzCloseCurrentFile(data->zipFile);
     } while (0);
+
+    pthread_mutex_unlock(&mutex);
     
     return pBuffer;
 }
