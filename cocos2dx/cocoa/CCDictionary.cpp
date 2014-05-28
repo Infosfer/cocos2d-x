@@ -416,7 +416,9 @@ void CCDictionary::acceptVisitor(CCDataVisitor &visitor)
 CCDictionary* CCDictionary::createWithContentsOfFile(const char *pFileName)
 {
     CCDictionary* pRet = createWithContentsOfFileThreadSafe(pFileName);
-    pRet->autorelease();
+    if (pRet) {
+        pRet->autorelease();
+    }
     return pRet;
 }
 
