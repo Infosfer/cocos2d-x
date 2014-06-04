@@ -47,8 +47,13 @@ Config of cocos2d-x project, per target platform.
 #define CC_PLATFORM_EMSCRIPTEN        10
 #define CC_PLATFORM_TIZEN             11
 
+#define CC_ANDROID_PLATFORM_UNKNOWN           0
+#define CC_ANDROID_PLATFORM_DEFAULT           1
+#define CC_ANDROID_PLATFORM_AMAZON            2
+
 // Determine target platform by compile environment macro.
 #define CC_TARGET_PLATFORM             CC_PLATFORM_UNKNOWN
+#define CC_ANDROID_PLATFORM            CC_ANDROID_PLATFORM_UNKNOWN
 
 // mac
 #if defined(CC_TARGET_OS_MAC)
@@ -66,6 +71,9 @@ Config of cocos2d-x project, per target platform.
 #if defined(ANDROID)
     #undef  CC_TARGET_PLATFORM
     #define CC_TARGET_PLATFORM         CC_PLATFORM_ANDROID
+
+    #undef  CC_ANDROID_PLATFORM
+    #define CC_ANDROID_PLATFORM        CC_ANDROID_PLATFORM_DEFAULT
 #endif
 
 // win32
@@ -114,6 +122,15 @@ Config of cocos2d-x project, per target platform.
 #if defined(TIZEN)
     #undef  CC_TARGET_PLATFORM
     #define CC_TARGET_PLATFORM     CC_PLATFORM_TIZEN
+#endif
+
+// kindle
+#if defined(AMAZON)
+    #undef  CC_TARGET_PLATFORM
+    #define CC_TARGET_PLATFORM     CC_PLATFORM_ANDROID
+
+    #undef  CC_ANDROID_PLATFORM
+    #define CC_ANDROID_PLATFORM    CC_ANDROID_PLATFORM_AMAZON
 #endif
 
 //////////////////////////////////////////////////////////////////////////
