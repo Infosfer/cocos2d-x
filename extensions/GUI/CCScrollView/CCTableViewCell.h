@@ -26,7 +26,7 @@
 #ifndef __CCTABLEVIEWCELL_H__
 #define __CCTABLEVIEWCELL_H__
 
-#include "base_nodes/CCNode.h"
+#include "sprite_nodes/CCSprite.h"
 #include "CCSorting.h"
 
 NS_CC_EXT_BEGIN
@@ -34,7 +34,7 @@ NS_CC_EXT_BEGIN
 /**
  * Abstract class for SWTableView cell node
  */
-class CCTableViewCell: public CCNode, public CCSortableObject
+class CCTableViewCell: public CCSprite, public CCSortableObject
 {
 public:
     CCTableViewCell() {}
