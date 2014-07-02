@@ -143,7 +143,8 @@ private:
     // MARMALADE: Made this protected not private, as deriving from this class is pretty useful
 //    CCSpriteFrameCache(void) : m_pSpriteFrames(NULL), m_pSpriteFramesAliases(NULL){}
 protected:
-    CCDictionary* m_pSpriteFrames;
+//    CCDictionary* m_pSpriteFrames;
+    CC_SYNTHESIZE(CCDictionary*, m_pSpriteFrames, SpriteFrames);
     CCDictionary* m_pSpriteFramesAliases;
     std::set<std::string>*  m_pLoadedFileNames;
 };
