@@ -1,6 +1,8 @@
 
 #include "CCParticleSystemQuadv2.h"
 
+USING_NS_CC;
+
 CCParticleSystemQuadv2::CCParticleSystemQuadv2()
 {
     

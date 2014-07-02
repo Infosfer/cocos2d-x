@@ -2,7 +2,7 @@
 
 #include "cocos2d.h"
 
-USING_NS_CC;
+NS_CC_BEGIN;
 
 /** CCParticleSystemQuadv2 is a subclass of CCParticleSystemQuad */
 
@@ -21,4 +21,4 @@ protected:
 	bool	init();
 };
 
-
+NS_CC_END;

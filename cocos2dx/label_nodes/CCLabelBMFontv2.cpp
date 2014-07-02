@@ -1,6 +1,8 @@
 
 #include "CCLabelBMFontv2.h"
 
+USING_NS_CC;
+
 CCLabelBMFontv2::CCLabelBMFontv2()
 {
 	
