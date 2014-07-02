@@ -771,6 +771,7 @@ void CCTexture2D::completeWithETCFile() {
     m_fMaxT = 1.0f;
     m_uPixelsWide = etc->getWidth();
     m_uPixelsHigh = etc->getHeight();
+    m_ePixelFormat = kCCTexture2DPixelFormat_ETC1;
     m_tContentSize = CCSizeMake((float)m_uPixelsWide, (float)m_uPixelsHigh);
     m_bHasPremultipliedAlpha = true;
 
@@ -953,6 +954,9 @@ unsigned int CCTexture2D::bitsPerPixelForFormat(CCTexture2DPixelFormat format)
 			break;
 		case kCCTexture2DPixelFormat_PVRTC2:
 			ret = 2;
+			break;
+		case kCCTexture2DPixelFormat_ETC1:
+			ret = 4;
 			break;
 		default:
 			ret = -1;
