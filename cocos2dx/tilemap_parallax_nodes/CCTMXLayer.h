@@ -85,6 +85,8 @@ class CC_DLL CCTMXLayer : public CCSpriteBatchNode
     CC_SYNTHESIZE(unsigned int, m_uLayerOrientation, LayerOrientation);
     /** properties from the layer. They can be added using Tiled */
     CC_PROPERTY(CCDictionary*, m_pProperties, Properties);
+
+    
 public:
     CCTMXLayer();
     virtual ~CCTMXLayer();
@@ -141,6 +143,9 @@ public:
 
     /** returns the position in points of a given tile coordinate */
     CCPoint positionAt(const CCPoint& tileCoordinate);
+    
+    /** return the position of tile */
+    CCPoint tileAtPosition(const CCPoint& pos);
 
     /** return the value for the specific property name */
     CCString *propertyNamed(const char *propertyName);

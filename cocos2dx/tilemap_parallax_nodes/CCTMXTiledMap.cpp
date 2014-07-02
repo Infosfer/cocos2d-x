@@ -59,7 +59,7 @@ CCTMXTiledMap* CCTMXTiledMap::createWithXML(const char* tmxString, const char* r
 
 bool CCTMXTiledMap::initWithTMXFile(const char *tmxFile)
 {
-    CCAssert(tmxFile != NULL && strlen(tmxFile)>0, "TMXTiledMap: tmx file should not bi NULL");
+    CCAssert(tmxFile != NULL && strlen(tmxFile)>0, "TMXTiledMap: tmx file should not be NULL");
     
     setContentSize(CCSizeZero);
 
@@ -130,6 +130,10 @@ void CCTMXTiledMap::setProperties(CCDictionary* var)
 CCTMXLayer * CCTMXTiledMap::parseLayer(CCTMXLayerInfo *layerInfo, CCTMXMapInfo *mapInfo)
 {
     CCTMXTilesetInfo *tileset = tilesetForLayer(layerInfo, mapInfo);
+    if (!tileset) {
+        return NULL;
+    }
+    
     CCTMXLayer *layer = CCTMXLayer::create(tileset, layerInfo, mapInfo);
 
     // tell the layerinfo to release the ownership of the tiles map.
@@ -201,6 +205,12 @@ void CCTMXTiledMap::buildWithMapInfo(CCTMXMapInfo* mapInfo)
     CC_SAFE_RELEASE(m_pTileProperties);
     m_pTileProperties = mapInfo->getTileProperties();
     CC_SAFE_RETAIN(m_pTileProperties);
+    
+    // Addition begin: for TileSets
+    //CC_SAFE_RELEASE(m_pTileSets);
+    m_pTileSets = mapInfo->getTilesets();
+    //CC_SAFE_RETAIN(m_pTileSets);
+    // Addition end: for TileSets
 
     int idx=0;
 
@@ -215,6 +225,11 @@ void CCTMXTiledMap::buildWithMapInfo(CCTMXMapInfo* mapInfo)
             if (layerInfo && layerInfo->m_bVisible)
             {
                 CCTMXLayer *child = parseLayer(layerInfo, mapInfo);
+                
+                if (!child) {
+                    continue;
+                }
+                
                 addChild((CCNode*)child, idx, idx);
 
                 // update content size with the max size
@@ -223,7 +238,7 @@ void CCTMXTiledMap::buildWithMapInfo(CCTMXMapInfo* mapInfo)
                 currentSize.width = MAX( currentSize.width, childSize.width );
                 currentSize.height = MAX( currentSize.height, childSize.height );
                 this->setContentSize(currentSize);
-
+                
                 idx++;
             }
         }
@@ -235,7 +250,7 @@ CCTMXLayer * CCTMXTiledMap::layerNamed(const char *layerName)
 {
     CCAssert(layerName != NULL && strlen(layerName) > 0, "Invalid layer name!");
     CCObject* pObj = NULL;
-    CCARRAY_FOREACH(m_pChildren, pObj) 
+    CCARRAY_FOREACH(m_pChildren, pObj)
     {
         CCTMXLayer* layer = dynamic_cast<CCTMXLayer*>(pObj);
         if(layer)

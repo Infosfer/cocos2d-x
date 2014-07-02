@@ -118,6 +118,12 @@ class CC_DLL CCTMXTiledMap : public CCNode
     CC_PROPERTY(CCArray*, m_pObjectGroups, ObjectGroups);
     /** properties */
     CC_PROPERTY(CCDictionary*, m_pProperties, Properties);
+    
+    // Addition begin: for TileSets
+    /** TileSets */
+    CC_SYNTHESIZE_READONLY(CCArray*, m_pTileSets, TileSets);
+    // Addition end: for TileSets
+    
 public:
     CCTMXTiledMap();
     virtual ~CCTMXTiledMap();
@@ -149,11 +155,11 @@ public:
 private:
     CCTMXLayer * parseLayer(CCTMXLayerInfo *layerInfo, CCTMXMapInfo *mapInfo);
     CCTMXTilesetInfo * tilesetForLayer(CCTMXLayerInfo *layerInfo, CCTMXMapInfo *mapInfo);
-    void buildWithMapInfo(CCTMXMapInfo* mapInfo);
+    
 protected:
     //! tile properties
     CCDictionary* m_pTileProperties;
-
+    void buildWithMapInfo(CCTMXMapInfo* mapInfo);
 };
 
 // end of tilemap_parallax_nodes group

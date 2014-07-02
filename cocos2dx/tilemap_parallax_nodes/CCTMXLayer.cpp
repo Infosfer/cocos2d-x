@@ -49,6 +49,9 @@ CCTMXLayer * CCTMXLayer::create(CCTMXTilesetInfo *tilesetInfo, CCTMXLayerInfo *l
     }
     return NULL;
 }
+
+#define _USE_MATH_DEFINES
+
 bool CCTMXLayer::initWithTilesetInfo(CCTMXTilesetInfo *tilesetInfo, CCTMXLayerInfo *layerInfo, CCTMXMapInfo *mapInfo)
 {    
     // XXX: is 35% a good estimate ?
@@ -72,24 +75,26 @@ bool CCTMXLayer::initWithTilesetInfo(CCTMXTilesetInfo *tilesetInfo, CCTMXLayerIn
         m_uMaxGID = layerInfo->m_uMaxGID;
         m_cOpacity = layerInfo->m_cOpacity;
         setProperties(CCDictionary::createWithDictionary(layerInfo->getProperties()));
-        m_fContentScaleFactor = CCDirector::sharedDirector()->getContentScaleFactor(); 
+        m_fContentScaleFactor = CCDirector::sharedDirector()->getContentScaleFactor();
 
         // tilesetInfo
         m_pTileSet = tilesetInfo;
         CC_SAFE_RETAIN(m_pTileSet);
 
         // mapInfo
-        m_tMapTileSize = mapInfo->getTileSize();
+        m_tMapTileSize = mapInfo->getTileSize()/* * CC_CONTENT_SCALE_FACTOR()*/;
         m_uLayerOrientation = mapInfo->getOrientation();
 
         // offset (after layer orientation is set);
         CCPoint offset = this->calculateLayerOffset(layerInfo->m_tOffset);
-        this->setPosition(CC_POINT_PIXELS_TO_POINTS(offset));
+        
+        this->setPosition(/*CC_POINT_PIXELS_TO_POINTS*/(offset));
 
         m_pAtlasIndexArray = ccCArrayNew((unsigned int)totalNumberOfTiles);
 
-        this->setContentSize(CC_SIZE_PIXELS_TO_POINTS(CCSizeMake(m_tLayerSize.width * m_tMapTileSize.width, m_tLayerSize.height * m_tMapTileSize.height)));
-
+        CCSize contentSize = (CCSizeMake( (m_tMapTileSize.width/2) * (m_tLayerSize.width + m_tLayerSize.height), (m_tMapTileSize.height/2) * (m_tLayerSize.width + m_tLayerSize.height) ) );
+        this->setContentSize(/*CC_SIZE_PIXELS_TO_POINTS*/ contentSize );
+        
         m_bUseAutomaticVertexZ = false;
         m_nVertexZvalue = 0;
         
@@ -423,7 +428,7 @@ CCSprite * CCTMXLayer::insertTileForGID(unsigned int gid, const CCPoint& pos)
 CCSprite * CCTMXLayer::updateTileForGID(unsigned int gid, const CCPoint& pos)    
 {
     CCRect rect = m_pTileSet->rectForGID(gid);
-    rect = CCRectMake(rect.origin.x / m_fContentScaleFactor, rect.origin.y / m_fContentScaleFactor, rect.size.width/ m_fContentScaleFactor, rect.size.height/ m_fContentScaleFactor);
+    rect = CCRectMake(rect.origin.x / m_fContentScaleFactor, rect.origin.y / m_fContentScaleFactor, rect.size.width / m_fContentScaleFactor, rect.size.height / m_fContentScaleFactor);
     int z = (int)(pos.x + pos.y * m_tLayerSize.width);
 
     CCSprite *tile = reusedTileWithRect(rect);
@@ -457,7 +462,10 @@ CCSprite * CCTMXLayer::appendTileForGID(unsigned int gid, const CCPoint& pos)
     // The difference between appendTileForGID and insertTileforGID is that append is faster, since
     // it appends the tile at the end of the texture atlas
     unsigned int indexForZ = m_pAtlasIndexArray->num;
+    
+    
 
+    
     // don't add it using the "standard" way.
     insertQuadFromSprite(tile, indexForZ);
 
@@ -633,7 +641,7 @@ CCPoint CCTMXLayer::calculateLayerOffset(const CCPoint& pos)
     case CCTMXOrientationOrtho:
         ret = ccp( pos.x * m_tMapTileSize.width, -pos.y *m_tMapTileSize.height);
         break;
-    case CCTMXOrientationIso:
+    case CCTMXOrientationIso: // TODO: check this calculation !!!
         ret = ccp((m_tMapTileSize.width /2) * (pos.x - pos.y),
                   (m_tMapTileSize.height /2 ) * (-pos.x - pos.y));
         break;
@@ -658,7 +666,7 @@ CCPoint CCTMXLayer::positionAt(const CCPoint& pos)
         ret = positionForHexAt(pos);
         break;
     }
-    ret = CC_POINT_PIXELS_TO_POINTS( ret );
+    ret = /*CC_POINT_PIXELS_TO_POINTS*/( ret );
     return ret;
 }
 CCPoint CCTMXLayer::positionForOrthoAt(const CCPoint& pos)
@@ -667,12 +675,24 @@ CCPoint CCTMXLayer::positionForOrthoAt(const CCPoint& pos)
                             (m_tLayerSize.height - pos.y - 1) * m_tMapTileSize.height);
     return xy;
 }
-CCPoint CCTMXLayer::positionForIsoAt(const CCPoint& pos)
-{
-    CCPoint xy = CCPointMake(m_tMapTileSize.width /2 * (m_tLayerSize.width + pos.x - pos.y - 1),
-                             m_tMapTileSize.height /2 * ((m_tLayerSize.height * 2 - pos.x - pos.y) - 2));
-    return xy;
+
+CCPoint CCTMXLayer::positionForIsoAt(const cocos2d::CCPoint &posA){
+    CCPoint pos = ccpMult(posA, 1);
+    CCPoint origin = CCPointMake(
+        /*"x": */(this->getContentSize().width / 2),
+        /*"y": */0
+                                 );
+    
+    float _y = (origin.y + (pos.y * (m_tMapTileSize.height/2)) + (pos.x * (m_tMapTileSize.height/2)) );
+    _y = (-_y + this->getContentSize().height) - (m_tMapTileSize.height);
+    
+        return CCPointMake(
+            /*"x": */origin.x - (pos.y * (m_tMapTileSize.width/2)) + (pos.x * (m_tMapTileSize.width/2)) - (m_tMapTileSize.width/2)
+                            /* IF NOT MAP EQUAL SIZE THEN SUBTRACT OFFSET VALUE */ -(m_tLayerSize.width != m_tLayerSize.height? ((m_tLayerSize.width-m_tLayerSize.height) * (m_tMapTileSize.width/2)) / 2 : 0),
+            /*"y": */ _y
+                           );
 }
+
 CCPoint CCTMXLayer::positionForHexAt(const CCPoint& pos)
 {
     float diffY = 0;
@@ -685,6 +705,46 @@ CCPoint CCTMXLayer::positionForHexAt(const CCPoint& pos)
                             (m_tLayerSize.height - pos.y - 1) * m_tMapTileSize.height + diffY);
     return xy;
 }
+/**
+ *
+ *
+ * tileatposition
+ *
+ *
+ *
+ ***/
+
+CCPoint CCTMXLayer::tileAtPosition(const cocos2d::CCPoint &p){
+    
+    CCPoint origin;
+    
+    CCSize oContentSize = this->getContentSize()/* / m_fContentScaleFactor*/;
+    CCSize oTileSize    = m_tMapTileSize/* / m_fContentScaleFactor*/;
+    
+    origin.x = oContentSize.width / 2;
+    origin.y = oContentSize.height;
+    
+    float offset = 0;
+    
+    if(m_tLayerSize.width != m_tLayerSize.height)
+        offset = (oTileSize.width/2) * m_tLayerSize.height;
+    origin.x = offset?offset:origin.x;
+    
+    
+    CCPoint xy0;
+    xy0.x = p.x - origin.x;
+    xy0.y = p.y - origin.y;
+    
+    CCPoint xy;
+    xy.x = -xy0.y + (xy0.x / ( oTileSize.width / oTileSize.height ) );
+    xy.y = -xy0.y - (xy0.x / ( oTileSize.width / oTileSize.height ) );
+
+    CCPoint tileCoord = ccp((int)floor((xy.x) / oTileSize.height), (int)floor((xy.y) / oTileSize.height));
+    //CCLOG("CTMXLayer::tileAtPosition p: %f %f xy0: %f %f xy: %f %f tileCoord: %f %f", p.x, p.y, xy0.x, xy0.y, xy.x, xy.y, tileCoord.x, tileCoord.y);
+    return tileCoord;
+    
+}
+
 int CCTMXLayer::vertexZForPos(const CCPoint& pos)
 {
     int ret = 0;
