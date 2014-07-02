@@ -364,11 +364,13 @@ void CCNode::setGrid(CCGridBase* pGrid)
     m_pGrid = pGrid;
 }
 
-
 /// isVisible getter
 bool CCNode::isVisible()
 {
-    return m_bVisible;
+    return this->m_bVisible == false ? false :
+                    (this->getParent() == NULL ? this->m_bVisible :
+                            (this->getParent()->m_bVisible  != false ?
+                                    this->getParent()->isVisible() : false) );
 }
 
 /// isVisible setter
