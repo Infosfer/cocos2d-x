@@ -20,7 +20,7 @@ public:
 	void						setVerticalAlignment(CCVerticalTextAlignment alignment);
 	void						setShrink(bool value);
 	void						setFontScale(float fontSc);
-
+    float                       getFontScale(){return this->_fontScale;}
 
 	// CCNode
 	virtual void				setContentSize(const CCSize &size);
