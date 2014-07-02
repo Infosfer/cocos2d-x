@@ -164,7 +164,7 @@ protected:
     GLuint       m_uFBO;
     GLuint       m_uDepthRenderBufffer;
     GLint        m_nOldFBO;
-    CCTexture2D* m_pTexture;
+    CC_SYNTHESIZE(CCTexture2D*, m_pTexture, Texture);// CCTexture2D* m_pTexture;
     CCTexture2D* m_pTextureCopy;    // a copy of m_pTexture
     CCImage*     m_pUITextureImage;
     GLenum       m_ePixelFormat;
