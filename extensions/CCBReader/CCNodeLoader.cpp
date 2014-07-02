@@ -576,7 +576,7 @@ CCSpriteFrame * CCNodeLoader::parsePropTypeSpriteFrame(CCNode * pNode, CCNode * 
             CCSpriteFrameCache * frameCache = CCSpriteFrameCache::sharedSpriteFrameCache();
             spriteSheet = pCCBReader->getCCBRootPath() + spriteSheet;   
             // Load the sprite sheet only if it is not loaded
-            if (pCCBReader->getLoadedSpriteSheet().find(spriteSheet) == pCCBReader->getLoadedSpriteSheet().end())
+            if (frameCache->spriteFrameByName(spriteFile.c_str()) == NULL && pCCBReader->getLoadedSpriteSheet().find(spriteSheet) == pCCBReader->getLoadedSpriteSheet().end())
             {
                 frameCache->addSpriteFramesWithFile(spriteSheet.c_str());
                 pCCBReader->getLoadedSpriteSheet().insert(spriteSheet);
