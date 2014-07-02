@@ -584,6 +584,11 @@ void CCCallFuncND::execute() {
     }
 }
 
+void CCCallFuncND::setData(void *data) {
+    if ( data ) {
+        m_pData = data;
+    }
+}
 //
 // CCCallFuncO
 //

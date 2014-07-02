@@ -319,6 +319,7 @@ public:
     // super methods
     virtual CCObject* copyWithZone(CCZone *pZone);
     virtual void execute();
+    virtual void setData(void *data);
 
 protected:
     void            *m_pData;
