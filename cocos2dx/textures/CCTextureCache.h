@@ -118,6 +118,7 @@ public:
     @since v0.99.5
     */
     CCTexture2D* textureForKey(const char* key);
+    const char* keyForTexture(CCTexture2D* texture);
     /** Purges the dictionary of loaded textures.
     * Call this method if you receive the "Memory Warning"
     * In the short term: it will free some resources preventing your app from being killed
