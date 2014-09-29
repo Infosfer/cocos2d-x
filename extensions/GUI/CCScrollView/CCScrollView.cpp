@@ -55,6 +55,9 @@ CCScrollView::CCScrollView()
 , m_pTouches(NULL)
 , m_fMinScale(0.0f)
 , m_fMaxScale(0.0f)
+, _scrollAtEdgeTreshold(0.0f)
+, _isScrollAtEdgeScheduled(false)
+, _scrollAtEdgePoint(CCPointZero)
 {
 
 }
@@ -655,7 +658,7 @@ void CCScrollView::ccTouchMoved(CCTouch* touch, CCEvent* event)
 
     if (m_pTouches->containsObject(touch))
     {
-        if (m_pTouches->count() == 1 && m_bDragging)
+        if (m_pTouches->count() == 1 && m_bDragging && m_eDirection != kCCScrollViewDirectionNone)
         { // scrolling
             CCPoint moveDistance, newPoint;
             CCRect  frame;
@@ -725,6 +728,36 @@ void CCScrollView::ccTouchMoved(CCTouch* touch, CCEvent* event)
                                             m_pContainer->convertTouchToNodeSpace((CCTouch*)m_pTouches->objectAtIndex(1)));
             this->setZoomScale(this->getZoomScale()*len/m_fTouchLength);
         }
+        else if (m_pContainer->getScale() != m_fMinScale && m_bDragging && m_eDirection == kCCScrollViewDirectionNone)
+        {
+            CCPoint newPoint = m_pContainer->getParent()->convertTouchToNodeSpace((CCTouch*)m_pTouches->objectAtIndex(0));
+            CCPoint pos = m_pContainer->getPosition();
+
+            _scrollAtEdgePoint = CCPointZero;
+
+            if (newPoint.x < _scrollAtEdgeTreshold) {
+                _scrollAtEdgePoint.x = 5;
+            }
+            else if (newPoint.x > getViewSize().width - _scrollAtEdgeTreshold) {
+                _scrollAtEdgePoint.x = -5;
+            }
+            else if (newPoint.y < _scrollAtEdgeTreshold) {
+                _scrollAtEdgePoint.y = 5;
+            }
+            else if (newPoint.y > getViewSize().height - _scrollAtEdgeTreshold) {
+                _scrollAtEdgePoint.y = -5;
+            }
+            else {
+                this->unschedule(schedule_selector(CCScrollView::scrollAtEdgeScroll));
+                _isScrollAtEdgeScheduled = false;
+                return;
+            }
+
+            if(!_isScrollAtEdgeScheduled) {
+                this->schedule(schedule_selector(CCScrollView::scrollAtEdgeScroll));
+                _isScrollAtEdgeScheduled = true;
+            }
+        }
     }
 }
 
@@ -747,6 +780,11 @@ void CCScrollView::ccTouchEnded(CCTouch* touch, CCEvent* event)
     {
         m_bDragging = false;    
         m_bTouchMoved = false;
+    }
+
+    if (_isScrollAtEdgeScheduled) {
+        this->unschedule(schedule_selector(CCScrollView::scrollAtEdgeScroll));
+        _isScrollAtEdgeScheduled = false;
     }
 }
 
@@ -805,6 +843,28 @@ void CCScrollView::calculateElasticity(CCPoint& moveDistance) {
 
     if (offset.y < minOffset.y || offset.y > maxOffset.y) {
         moveDistance.y *= (1.0f - elasticity);
+    }
+}
+
+void CCScrollView::setMaxScale(float maxScale) {
+    m_fMaxScale = maxScale;
+}
+
+void CCScrollView::setMinScale(float minScale) {
+    m_fMinScale = minScale;
+}
+
+void CCScrollView::setScrollAtEdgeTreshold(float treshold) {
+    _scrollAtEdgeTreshold = treshold;
+}
+
+void CCScrollView::scrollAtEdgeScroll(float dt) {
+    CCPoint prevPos = m_pContainer->getPosition();
+    setContentOffset(prevPos + _scrollAtEdgePoint, false);
+
+    if (m_pContainer->getPosition().equals(prevPos)) {
+        this->unschedule(schedule_selector(CCScrollView::scrollAtEdgeScroll));
+        _isScrollAtEdgeScheduled = false;
     }
 }
 
