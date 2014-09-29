@@ -731,8 +731,7 @@ void CCScrollView::ccTouchMoved(CCTouch* touch, CCEvent* event)
         else if (m_pContainer->getScale() != m_fMinScale && m_bDragging && m_eDirection == kCCScrollViewDirectionNone)
         {
             CCPoint newPoint = m_pContainer->getParent()->convertTouchToNodeSpace((CCTouch*)m_pTouches->objectAtIndex(0));
-            CCPoint pos = m_pContainer->getPosition();
-
+            
             _scrollAtEdgePoint = CCPointZero;
 
             if (newPoint.x < _scrollAtEdgeTreshold) {
