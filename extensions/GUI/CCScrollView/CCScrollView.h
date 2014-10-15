@@ -205,6 +205,12 @@ public:
     void setMaxScale(float maxScale);
     void setMinScale(float minScale);
     void setScrollAtEdgeTreshold(float treshold);
+
+    float SCROLL_DEACCEL_RATE = 0.9f;
+    float SCROLL_DEACCEL_DIST = 1.0f;
+    float BOUNCE_DURATION = 0.15f;
+    float INSET_RATIO = 0.05f;
+    float MOVE_INCH = 7.0f/160.0f;
 private:
     /**
      * Relocates the container at the proper offset, in bounds of max/min offsets.

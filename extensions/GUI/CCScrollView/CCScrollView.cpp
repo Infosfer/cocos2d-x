@@ -27,12 +27,14 @@
 
 NS_CC_EXT_BEGIN
 
+// Scroll View defines become public members.
+/*
 #define SCROLL_DEACCEL_RATE  0.9f
 #define SCROLL_DEACCEL_DIST  1.0f
 #define BOUNCE_DURATION      0.15f
 #define INSET_RATIO          0.05f
 #define MOVE_INCH            7.0f/160.0f
-
+*/
 static float convertDistanceFromPointToInch(float pointDis)
 {
     float factor = ( CCEGLView::sharedOpenGLView()->getScaleX() + CCEGLView::sharedOpenGLView()->getScaleY() ) / 2;
