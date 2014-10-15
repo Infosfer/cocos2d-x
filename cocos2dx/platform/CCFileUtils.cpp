@@ -642,6 +642,14 @@ std::string CCFileUtils::fullPathForFilename(const char* pszFileName)
     return pszFileName;
 }
 
+void CCFileUtils::insertFullPathCache(const char* pszFileName, const char* fullpath) {
+    std::map<std::string, std::string>::iterator cacheIter = m_fullPathCache.find(pszFileName);
+    if (cacheIter == m_fullPathCache.end())
+    {
+        m_fullPathCache.insert(std::pair<std::string, std::string>(pszFileName, fullpath));
+    }
+}
+
 void CCFileUtils::updateFullPathCacheForFile(const char* pszFileName, const char* fullpath) {
     std::map<std::string, std::string>::iterator cacheIter = m_fullPathCache.find(pszFileName);
     if (cacheIter != m_fullPathCache.end())

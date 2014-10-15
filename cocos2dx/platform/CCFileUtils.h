@@ -150,6 +150,7 @@ public:
      */
     virtual std::string fullPathForFilename(const char* pszFileName);
 
+    virtual void insertFullPathCache(const char* pszFileName, const char* fullpath);
     virtual void updateFullPathCacheForFile(const char* pszFileName, const char* fullpath);
     
     /**
