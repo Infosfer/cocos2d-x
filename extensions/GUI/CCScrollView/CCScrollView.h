@@ -201,6 +201,10 @@ public:
     virtual void addChild(CCNode * child, int zOrder);
     virtual void addChild(CCNode * child);
     void setTouchEnabled(bool e);
+
+    void setMaxScale(float maxScale);
+    void setMinScale(float minScale);
+    void setScrollAtEdgeTreshold(float treshold);
 private:
     /**
      * Relocates the container at the proper offset, in bounds of max/min offsets.
@@ -240,6 +244,8 @@ private:
     void handleZoom();
 
     void calculateElasticity(CCPoint& moveDistance);
+
+    void scrollAtEdgeScroll(float dt);
 
 protected:
     CCRect getViewRect();
@@ -326,6 +332,10 @@ protected:
      */
     CCRect m_tParentScissorRect;
     bool m_bScissorRestored;
+
+    float _scrollAtEdgeTreshold;
+    bool _isScrollAtEdgeScheduled;
+    CCPoint _scrollAtEdgePoint;
 };
 
 // end of GUI group

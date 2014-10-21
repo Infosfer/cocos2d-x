@@ -722,6 +722,17 @@ CCTexture2D* CCTextureCache::textureForKey(const char* key)
     return (CCTexture2D*)m_pTextures->objectForKey(CCFileUtils::sharedFileUtils()->fullPathForFilename(key));
 }
 
+const char* CCTextureCache::keyForTexture(CCTexture2D* texture)
+{
+    CCDictElement* el = NULL;
+    CCDICT_FOREACH(m_pTextures, el) {
+        if (el->getObject() == texture) {
+            return el->getStrKey();
+        }
+    }
+    return NULL;
+}
+
 void CCTextureCache::reloadAllTextures()
 {
 #if CC_ENABLE_CACHE_TEXTURE_DATA

@@ -642,6 +642,14 @@ std::string CCFileUtils::fullPathForFilename(const char* pszFileName)
     return pszFileName;
 }
 
+void CCFileUtils::updateFullPathCacheForFile(const char* pszFileName, const char* fullpath) {
+    std::map<std::string, std::string>::iterator cacheIter = m_fullPathCache.find(pszFileName);
+    if (cacheIter != m_fullPathCache.end())
+    {
+        cacheIter->second = fullpath;
+    }
+}
+
 const char* CCFileUtils::fullPathFromRelativeFile(const char *pszFilename, const char *pszRelativeFile)
 {
     std::string relativeFile = pszRelativeFile;
