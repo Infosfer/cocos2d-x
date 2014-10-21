@@ -38,6 +38,7 @@ obj/
 gen/
 assets/
 local.properties
+projects/
 
 # Ignore files built by NaCl
 samples/Cpp/HelloCpp/proj.nacl/Resources/
