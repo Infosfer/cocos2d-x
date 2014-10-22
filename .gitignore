@@ -93,6 +93,3 @@ tools/jenkins_scripts/mac/android/userconf.ini
 
 # CTags
 tags
-
-**/local.properties
-**/project.properties
