@@ -38,6 +38,7 @@ obj/
 gen/
 assets/
 local.properties
+projects/
 
 # Ignore files built by NaCl
 samples/Cpp/HelloCpp/proj.nacl/Resources/
@@ -92,3 +93,4 @@ tools/jenkins_scripts/mac/android/userconf.ini
 
 # CTags
 tags
+**/local.properties
