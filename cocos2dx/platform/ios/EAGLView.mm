@@ -154,7 +154,12 @@ static EAGLView *view = 0;
 		
 		if ([view respondsToSelector:@selector(setContentScaleFactor:)])
 		{
-			view.contentScaleFactor = [[UIScreen mainScreen] scale];
+            if ([[UIScreen mainScreen] respondsToSelector:@selector(nativeScale)]) {
+                view.contentScaleFactor = [[UIScreen mainScreen] nativeScale];
+            }
+            else {
+                view.contentScaleFactor = [[UIScreen mainScreen] scale];
+            }
 		}
     }
         
