@@ -101,7 +101,7 @@ public:
      * @param offset new offset
      * @param If YES, the view scrolls to the new offset
      */
-    void setContentOffset(CCPoint offset, bool animated = false);
+    virtual void setContentOffset(CCPoint offset, bool animated = false);
     CCPoint getContentOffset();
     /**
      * Sets a new content offset. It ignores max/min offset. It just sets what's given. (just like UIKit's UIScrollView)
@@ -110,16 +110,16 @@ public:
      * @param offset new offset
      * @param animation duration
      */
-    void setContentOffsetInDuration(CCPoint offset, float dt); 
+    virtual void setContentOffsetInDuration(CCPoint offset, float dt);
 
-    void setZoomScale(float s);
+    virtual void setZoomScale(float s);
     /**
      * Sets a new scale and does that for a predefined duration.
      *
      * @param s a new scale vale
      * @param animated if YES, scaling is animated
      */
-    void setZoomScale(float s, bool animated);
+    virtual void setZoomScale(float s, bool animated);
 
     float getZoomScale();
 
@@ -129,7 +129,7 @@ public:
      * @param s a new scale value
      * @param animation duration
      */
-    void setZoomScaleInDuration(float s, float dt);
+    virtual void setZoomScaleInDuration(float s, float dt);
     /**
      * Returns the current container's minimum offset. You may want this while you animate scrolling by yourself
      */
