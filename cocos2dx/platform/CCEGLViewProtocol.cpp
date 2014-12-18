@@ -198,7 +198,7 @@ void CCEGLViewProtocol::handleTouchesBegin(int num, uintptr_t ids[], float xs[],
     CCSet set;
     for (int i = 0; i < num; ++i)
     {
-        int id = ids[i];
+        uintptr_t id = ids[i];
         float x = xs[i];
         float y = ys[i];
 
@@ -243,7 +243,7 @@ void CCEGLViewProtocol::handleTouchesMove(int num, uintptr_t ids[], float xs[], 
     CCSet set;
     for (int i = 0; i < num; ++i)
     {
-        int id = ids[i];
+        uintptr_t id = ids[i];
         float x = xs[i];
         float y = ys[i];
 
@@ -253,7 +253,7 @@ void CCEGLViewProtocol::handleTouchesMove(int num, uintptr_t ids[], float xs[], 
             continue;
         }
 
-        CCLOGINFO("Moving touches with id: %d, x=%f, y=%f", id, x, y);
+        CCLOGINFO("Moving touches with id: %ld, x=%f, y=%f", id, x, y);
         CCTouch* pTouch = s_pTouches[pIndex->getValue()];
         if (pTouch)
         {
@@ -265,7 +265,7 @@ void CCEGLViewProtocol::handleTouchesMove(int num, uintptr_t ids[], float xs[], 
         else
         {
             // It is error, should return.
-            CCLOG("Moving touches with id: %d error", id);
+            CCLOG("Moving touches with id: %ld error", id);
             return;
         }
     }
@@ -313,7 +313,7 @@ void CCEGLViewProtocol::getSetOfTouchesEndOrCancel(CCSet& set, int num, uintptr_
         } 
         else
         {
-            CCLOG("Ending touches with id: %d error", id);
+            CCLOG("Ending touches with id: %ld error", id);
             return;
         } 
 
