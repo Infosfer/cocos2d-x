@@ -521,6 +521,12 @@ CCRect CCNode::boundingBox()
     return CCRectApplyAffineTransform(rect, nodeToParentTransform());
 }
 
+CCRect CCNode::boundingBoxWorld()
+{
+    CCRect rect = CCRectMake(0, 0, m_obContentSize.width, m_obContentSize.height);
+    return CCRectApplyAffineTransform(rect, nodeToWorldTransform());
+}
+
 CCNode * CCNode::create(void)
 {
 	CCNode * pRet = new CCNode();
