@@ -226,6 +226,8 @@ private:
      */
 protected:
     virtual void deaccelerateScrolling(float dt);
+
+    virtual void scrollingEnded() {}
 private:
     /**
      * This method makes sure auto scrolling causes delegate to invoke its method

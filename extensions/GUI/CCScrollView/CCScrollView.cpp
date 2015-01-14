@@ -354,6 +354,9 @@ void CCScrollView::relocateContainer(bool animated)
     {
         this->setContentOffset(ccp(newX, newY), animated);
     }
+    else {
+        scrollingEnded();
+    }
 }
 
 CCPoint CCScrollView::maxContainerOffset()
@@ -434,6 +437,8 @@ void CCScrollView::stoppedAnimatedScroll(CCNode * node)
     {
         m_pDelegate->scrollViewDidScroll(this);
     }
+
+    scrollingEnded();
 }
 
 void CCScrollView::performedAnimatedScroll(float dt)
