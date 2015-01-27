@@ -247,7 +247,7 @@ void CCScrollView::setZoomScale(float s)
         }
         else
         {
-            center = m_tTouchPoint;
+            center = this->convertToWorldSpace(m_tTouchPoint);
         }
         
         oldCenter = m_pContainer->convertToNodeSpace(center);
