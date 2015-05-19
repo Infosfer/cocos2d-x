@@ -224,7 +224,7 @@ private:
      *
      * @param dt delta
      */
-protected:
+public:
     virtual void deaccelerateScrolling(float dt);
 
     virtual void scrollingEnded() {}
