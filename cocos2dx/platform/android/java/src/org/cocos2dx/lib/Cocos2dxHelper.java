@@ -110,6 +110,10 @@ public class Cocos2dxHelper {
 		return Build.MODEL;
     }
 
+    public static int getAndroidVersion(){
+        return Build.VERSION.SDK_INT;
+    }
+
 	public static AssetManager getAssetManager() {
 		return Cocos2dxHelper.sAssetManager;
 	}

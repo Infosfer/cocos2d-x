@@ -75,6 +75,29 @@ SimpleAudioEngine::SimpleAudioEngine()
 	const char* deviceModel = methodInfo.env->GetStringUTFChars(jstr, NULL);
     
 	LOGD(deviceModel);
+
+	if (strstr(deviceModel, "Nexus") != NULL)
+	{
+		LOGD("Nexus device detected");
+
+		JniMethodInfo t;
+	    int androidVersion = 0;
+	    if (JniHelper::getStaticMethodInfo(t, CLASS_NAME, "getAndroidVersion", "()I")) {
+	        androidVersion = (int)t.env->CallStaticIntMethod(t.classID, t.methodID);
+	        t.env->DeleteLocalRef(t.classID);
+	    }
+
+	    LOGD("Android Version: %d", androidVersion);
+
+		if (androidVersion == 21)
+		{
+			LOGD("Nexus device and Android version is 5.0.x - Switch to OpenSLES");
+			s_bI9100 = true;	
+		}
+		else {
+			LOGD("Nexus device use default media library");
+		}
+	}
     
 	if (strcmp(I9100_MODEL, deviceModel) == 0)
 	{
