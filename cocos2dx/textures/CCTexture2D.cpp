@@ -972,5 +972,19 @@ unsigned int CCTexture2D::bitsPerPixelForFormat()
 	return this->bitsPerPixelForFormat(m_ePixelFormat);
 }
 
+void CCTexture2D::mergeImageWithAlphaImage(CCImage* targetImage, CCImage* alphaImage) {
+    unsigned char* tempData = targetImage->getData();
+    unsigned int* inPixelAlpha32  = (unsigned int*)alphaImage->getData();
+
+    // Repack the pixel data into the right format
+    unsigned int length = targetImage->getWidth() * targetImage->getHeight();
+
+    tempData += 3;
+    for(unsigned int i = 0; i < length; ++i, tempData += 4, ++inPixelAlpha32)
+    {
+        *tempData = (*inPixelAlpha32 >> 8) & 0xFF;
+    }
+}
+
 
 NS_CC_END

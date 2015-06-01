@@ -246,6 +246,8 @@ public:
      */
     static void PVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied);
 
+    static void mergeImageWithAlphaImage(CCImage* targetImage, CCImage* alphaImage);
+
     /** content size */
     const CCSize& getContentSizeInPixels();
     

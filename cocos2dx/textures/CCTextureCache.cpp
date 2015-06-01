@@ -287,6 +287,36 @@ void CCTextureCache::addImageAsync(const char *path, CCObject *target, SEL_CallF
         
         return;
     }
+#if 1//(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    std::string pathWithoutExtension = path;
+    size_t lastdot = pathWithoutExtension.find_last_of(".");
+    if (lastdot != std::string::npos) {
+        pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
+    }
+    std::string pathAlpha = pathWithoutExtension + "-alpha.png";
+    if (CCFileUtils::sharedFileUtils()->isFileExist(CCFileUtils::sharedFileUtils()->fullPathForFilename(pathAlpha.c_str()).c_str())) {
+        // Thread works
+        CCImage* img = new CCImage();
+        std::string pathJpg = pathWithoutExtension + ".jpg";
+        img->initWithImageFile(CCFileUtils::sharedFileUtils()->fullPathForFilename(pathJpg.c_str()).c_str());
+
+        CCImage* imgAlpha = new CCImage();
+        imgAlpha->initWithImageFile(CCFileUtils::sharedFileUtils()->fullPathForFilename(pathAlpha.c_str()).c_str());
+
+        CCTexture2D::mergeImageWithAlphaImage(img, imgAlpha);
+
+        texture = CCTextureCache::sharedTextureCache()->addUIImage(img, CCFileUtils::sharedFileUtils()->fullPathForFilename(pathKey.c_str()).c_str());
+
+        delete img;
+        delete imgAlpha;
+
+        if (target && selector) {
+            (target->*selector)(texture);
+        }
+
+        return;
+    }
+#endif
 
     // lazy init
     if (s_pAsyncStructQueue == NULL)
@@ -944,20 +974,59 @@ void VolatileTexture::reloadAllTextures()
                 } 
                 else
                 {
-                    CCImage* pImage = new CCImage();
-                    unsigned long nSize = 0;
-                    unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(vt->m_strFileName.c_str(), "rb", &nSize);
+                    std::string pathWithoutExtension = vt->m_strFileName.c_str();
+                    size_t lastdot = pathWithoutExtension.find_last_of(".");
+                    if (lastdot != std::string::npos) {
+                        pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
+                    }
+                    std::string pathAlpha = pathWithoutExtension + "-alpha.png";
+                    if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
 
-                    if (pImage && pImage->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage))
-                    {
+                        // Create Color Image
+                        CCImage* pImage = new CCImage();
+                        std::string pathJpg = pathWithoutExtension + ".jpg";
+                        unsigned long nSize = 0;
+                        unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(pathJpg.c_str(), "rb", &nSize);
+                        pImage->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage);
+                        CC_SAFE_DELETE_ARRAY(pBuffer);
+
+                        // Create Merge Image
+                        CCImage* pImageAlpha = new CCImage();
+                        unsigned long nSize = 0;
+                        unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(pathAlpha.c_str(), "rb", &nSize);
+                        pImageAlpha->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage);
+                        CC_SAFE_DELETE_ARRAY(pBuffer);
+
+                        // Merge Alpha to Color
+                        CCTexture2D::mergeImageWithAlphaImage(pImage, pImageAlpha);
+
+                        // Recreate Texture
                         CCTexture2DPixelFormat oldPixelFormat = CCTexture2D::defaultAlphaPixelFormat();
                         CCTexture2D::setDefaultAlphaPixelFormat(vt->m_PixelFormat);
                         vt->texture->initWithImage(pImage);
                         CCTexture2D::setDefaultAlphaPixelFormat(oldPixelFormat);
-                    }
 
-                    CC_SAFE_DELETE_ARRAY(pBuffer);
-                    CC_SAFE_RELEASE(pImage);
+                        CC_SAFE_RELEASE(pImage);
+                        CC_SAFE_RELEASE(pImageAlpha);
+
+                        return;
+                    }
+                    else {
+                        CCImage* pImage = new CCImage();
+                        unsigned long nSize = 0;
+                        unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(vt->m_strFileName.c_str(), "rb", &nSize);
+
+                        if (pImage && pImage->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage))
+                        {
+                            CCTexture2DPixelFormat oldPixelFormat = CCTexture2D::defaultAlphaPixelFormat();
+                            CCTexture2D::setDefaultAlphaPixelFormat(vt->m_PixelFormat);
+                            vt->texture->initWithImage(pImage);
+                            CCTexture2D::setDefaultAlphaPixelFormat(oldPixelFormat);
+                        }
+
+                        CC_SAFE_DELETE_ARRAY(pBuffer);
+                        CC_SAFE_RELEASE(pImage);
+                    }
                 }
             }
             break;
