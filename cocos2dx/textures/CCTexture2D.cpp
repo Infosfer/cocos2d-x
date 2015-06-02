@@ -972,18 +972,31 @@ unsigned int CCTexture2D::bitsPerPixelForFormat()
 	return this->bitsPerPixelForFormat(m_ePixelFormat);
 }
 
-void CCTexture2D::mergeImageWithAlphaImage(CCImage* targetImage, CCImage* alphaImage) {
-    unsigned char* tempData = targetImage->getData();
-    unsigned int* inPixelAlpha32  = (unsigned int*)alphaImage->getData();
+CCImage* CCTexture2D::mergeImageWithAlphaImage(CCImage* colorImage, CCImage* alphaImage) {
+    unsigned int length = colorImage->getWidth() * colorImage->getHeight();
+    unsigned char* colorPixel = colorImage->getData();
+    unsigned char* alphaPixel = alphaImage->getData();
 
-    // Repack the pixel data into the right format
-    unsigned int length = targetImage->getWidth() * targetImage->getHeight();
+    unsigned char* tempData = new unsigned char[length * 4];
+    unsigned char* outPixel = tempData;
 
-    tempData += 3;
-    for(unsigned int i = 0; i < length; ++i, tempData += 4, ++inPixelAlpha32)
+    int colorIncrement = colorImage->hasAlpha() ? 4 : 3;
+    int alphaIncrement = alphaImage->hasAlpha() ? 4 : 3;
+
+    for(unsigned int i = 0; i < length; ++i, colorPixel += colorIncrement, alphaPixel += alphaIncrement)
     {
-        *tempData = (*inPixelAlpha32 >> 8) & 0xFF;
+        *outPixel++ = *(colorPixel) & 0xFF;     // R
+        *outPixel++ = *(colorPixel + 1) & 0xFF; // G
+        *outPixel++ = *(colorPixel + 2) & 0xFF; // B
+        *outPixel++ = *(alphaPixel) & 0xFF;     // A
     }
+
+    CCImage* outImage = new CCImage();
+    outImage->initWithImageData(tempData, length, CCImage::kFmtRawData, colorImage->getWidth(), colorImage->getHeight(), 8);
+
+    delete [] tempData;
+
+    return outImage;
 }
 
 

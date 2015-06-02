@@ -175,19 +175,20 @@ static void* loadImage(void* data)
             if (lastdot != std::string::npos) {
                 pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
             }
-            std::string pathAlpha = pathWithoutExtension + "-alpha.jpg";
+            std::string pathAlpha = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + "-alpha.jpg").c_str());
             if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
-                std::string pathJpg = pathWithoutExtension + ".jpg";
+                std::string pathJpg = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + ".jpg").c_str());
 
-                pImage = new CCImage();
-                pImage->initWithImageFileThreadSafe(pathJpg.c_str(), imageType);
+                CCImage* imgColor = new CCImage();
+                imgColor->initWithImageFileThreadSafe(pathJpg.c_str(), CCImage::kFmtJpg);
 
                 CCImage* imgAlpha = new CCImage();
-                imgAlpha->initWithImageFileThreadSafe(pathAlpha.c_str(), imageType);
+                imgAlpha->initWithImageFileThreadSafe(pathAlpha.c_str(), CCImage::kFmtJpg);
 
-                CCTexture2D::mergeImageWithAlphaImage(pImage, imgAlpha);
+                pImage = CCTexture2D::mergeImageWithAlphaImage(imgColor, imgAlpha);
                 pImage->setIsPremultipliedAlpha(true);
 
+                delete imgColor;
                 delete imgAlpha;
                 /*
                 if (pImage && !pImage->initWithImageFileThreadSafe(filename, imageType))
@@ -500,11 +501,39 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
                     eImageFormat = CCImage::kFmtWebp;
                 }
                 
-                pImage = new CCImage();
-                CC_BREAK_IF(NULL == pImage);
 
-                bool bRet = pImage->initWithImageFile(fullpath.c_str(), eImageFormat);
-                CC_BREAK_IF(!bRet);
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+                std::string pathWithoutExtension = fullpath;
+                size_t lastdot = pathWithoutExtension.find_last_of(".");
+                if (lastdot != std::string::npos) {
+                    pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
+                }
+                std::string pathAlpha = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + "-alpha.jpg").c_str());
+                if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
+                    std::string pathJpg = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + ".jpg").c_str());
+
+                    CCImage* imgColor = new CCImage();
+                    imgColor->initWithImageFile(pathJpg.c_str(), CCImage::kFmtJpg);
+
+                    CCImage* imgAlpha = new CCImage();
+                    imgAlpha->initWithImageFile(pathAlpha.c_str(), CCImage::kFmtJpg);
+
+                    pImage = CCTexture2D::mergeImageWithAlphaImage(imgColor, imgAlpha);
+                    pImage->setIsPremultipliedAlpha(true);
+
+                    delete imgColor;
+                    delete imgAlpha;
+                }
+                else
+#endif
+                {
+                    pImage = new CCImage();
+                    CC_BREAK_IF(NULL == pImage);
+
+                    bool bRet = pImage->initWithImageFile(fullpath.c_str(), eImageFormat);
+                    CC_BREAK_IF(!bRet);
+                }
 
                 texture = new CCTexture2D();
                 
@@ -986,22 +1015,22 @@ void VolatileTexture::reloadAllTextures()
                     if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
 
                         // Create Color Image
-                        CCImage* pImage = new CCImage();
+                        CCImage* pImageColor = new CCImage();
                         std::string pathJpg = pathWithoutExtension + ".jpg";
                         unsigned long nSize = 0;
                         unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(pathJpg.c_str(), "rb", &nSize);
-                        pImage->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage);
+                        pImageColor->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage);
                         CC_SAFE_DELETE_ARRAY(pBuffer);
 
                         // Create Merge Image
                         CCImage* pImageAlpha = new CCImage();
-                        unsigned long nSize = 0;
-                        unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(pathAlpha.c_str(), "rb", &nSize);
+                        nSize = 0;
+                        pBuffer = CCFileUtils::sharedFileUtils()->getFileData(pathAlpha.c_str(), "rb", &nSize);
                         pImageAlpha->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage);
                         CC_SAFE_DELETE_ARRAY(pBuffer);
 
                         // Merge Alpha to Color
-                        CCTexture2D::mergeImageWithAlphaImage(pImage, pImageAlpha);
+                        CCImage* pImage = CCTexture2D::mergeImageWithAlphaImage(pImageColor, pImageAlpha);
 
                         // Recreate Texture
                         CCTexture2DPixelFormat oldPixelFormat = CCTexture2D::defaultAlphaPixelFormat();
