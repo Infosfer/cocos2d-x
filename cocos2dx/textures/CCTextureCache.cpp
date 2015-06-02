@@ -169,13 +169,46 @@ static void* loadImage(void* data)
         }
 
         if (imageType != CCImage::kFmtRawData) {
-            // generate image
-            pImage = new CCImage();
-            if (pImage && !pImage->initWithImageFileThreadSafe(filename, imageType))
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+            std::string pathWithoutExtension = filename;
+            size_t lastdot = pathWithoutExtension.find_last_of(".");
+            if (lastdot != std::string::npos) {
+                pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
+            }
+            std::string pathAlpha = pathWithoutExtension + "-alpha.jpg";
+            if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
+                std::string pathJpg = pathWithoutExtension + ".jpg";
+
+                pImage = new CCImage();
+                pImage->initWithImageFileThreadSafe(pathJpg.c_str(), imageType);
+
+                CCImage* imgAlpha = new CCImage();
+                imgAlpha->initWithImageFileThreadSafe(pathAlpha.c_str(), imageType);
+
+                CCTexture2D::mergeImageWithAlphaImage(pImage, imgAlpha);
+                pImage->setIsPremultipliedAlpha(true);
+
+                delete imgAlpha;
+                /*
+                if (pImage && !pImage->initWithImageFileThreadSafe(filename, imageType))
+                {
+                    CC_SAFE_RELEASE(pImage);
+                    CCLOG("can not load %s", filename);
+                    continue;
+                }
+                */
+            }
+            else
+#endif
             {
-                CC_SAFE_RELEASE(pImage);
-                CCLOG("can not load %s", filename);
-                continue;
+                // generate image
+                pImage = new CCImage();
+                if (pImage && !pImage->initWithImageFileThreadSafe(filename, imageType))
+                {
+                    CC_SAFE_RELEASE(pImage);
+                    CCLOG("can not load %s", filename);
+                    continue;
+                }
             }
         }
 
@@ -287,36 +320,6 @@ void CCTextureCache::addImageAsync(const char *path, CCObject *target, SEL_CallF
         
         return;
     }
-#if 1//(CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    std::string pathWithoutExtension = path;
-    size_t lastdot = pathWithoutExtension.find_last_of(".");
-    if (lastdot != std::string::npos) {
-        pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
-    }
-    std::string pathAlpha = pathWithoutExtension + "-alpha.png";
-    if (CCFileUtils::sharedFileUtils()->isFileExist(CCFileUtils::sharedFileUtils()->fullPathForFilename(pathAlpha.c_str()).c_str())) {
-        // Thread works
-        CCImage* img = new CCImage();
-        std::string pathJpg = pathWithoutExtension + ".jpg";
-        img->initWithImageFile(CCFileUtils::sharedFileUtils()->fullPathForFilename(pathJpg.c_str()).c_str());
-
-        CCImage* imgAlpha = new CCImage();
-        imgAlpha->initWithImageFile(CCFileUtils::sharedFileUtils()->fullPathForFilename(pathAlpha.c_str()).c_str());
-
-        CCTexture2D::mergeImageWithAlphaImage(img, imgAlpha);
-
-        texture = CCTextureCache::sharedTextureCache()->addUIImage(img, CCFileUtils::sharedFileUtils()->fullPathForFilename(pathKey.c_str()).c_str());
-
-        delete img;
-        delete imgAlpha;
-
-        if (target && selector) {
-            (target->*selector)(texture);
-        }
-
-        return;
-    }
-#endif
 
     // lazy init
     if (s_pAsyncStructQueue == NULL)

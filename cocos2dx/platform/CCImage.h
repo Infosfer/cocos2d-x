@@ -147,6 +147,7 @@ public:
 
     bool hasAlpha()                     { return m_bHasAlpha;   }
     bool isPremultipliedAlpha()         { return m_bPreMulti;   }
+    void setIsPremultipliedAlpha(bool bPreMulti) { m_bPreMulti = bPreMulti; }
 
 
     /**
