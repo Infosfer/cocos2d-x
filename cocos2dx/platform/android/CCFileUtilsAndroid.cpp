@@ -97,6 +97,41 @@ bool CCFileUtilsAndroid::isFileExist(const std::string& strFilePath)
     return bFound;
 }
 
+bool CCFileUtilsAndroid::isFileExistAsync(const std::string& strFilePath)
+{
+    if (0 == strFilePath.length())
+    {
+        return false;
+    }
+
+    bool bFound = false;
+    
+    // Check whether file exists in apk.
+    if (strFilePath[0] != '/')
+    {
+        std::string strPath = strFilePath;
+        if (strPath.find(m_strDefaultResRootPath) != 0)
+        {// Didn't find "assets/" at the beginning of the path, adding it.
+            strPath.insert(0, m_strDefaultResRootPath);
+        }
+
+        if (s_pZipFile->fileExistsAsync(strPath))
+        {
+            bFound = true;
+        } 
+    }
+    else
+    {
+        FILE *fp = fopen(strFilePath.c_str(), "r");
+        if(fp)
+        {
+            bFound = true;
+            fclose(fp);
+        }
+    }
+    return bFound;
+}
+
 bool CCFileUtilsAndroid::isAbsolutePath(const std::string& strPath)
 {
     // On Android, there are two situations for full path.

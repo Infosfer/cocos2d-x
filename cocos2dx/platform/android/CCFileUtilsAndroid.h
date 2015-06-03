@@ -57,6 +57,7 @@ public:
      Don't use it in your codes.
      */
     unsigned char* getFileDataForAsync(const char* pszFileName, const char* pszMode, unsigned long * pSize);
+    bool isFileExistAsync(const std::string& strFilePath);
     
 private:
     unsigned char* doGetFileData(const char* pszFileName, const char* pszMode, unsigned long * pSize, bool forAsync);

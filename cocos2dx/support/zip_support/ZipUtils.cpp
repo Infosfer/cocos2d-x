@@ -553,6 +553,23 @@ bool ZipFile::fileExists(const std::string &fileName) const
     return ret;
 }
 
+bool ZipFile::fileExistsAsync(const std::string &fileName) const
+{
+    pthread_mutex_lock(&mutex);
+
+    bool ret = false;
+    do
+    {
+        CC_BREAK_IF(!_dataThread);
+        
+        ret = _dataThread->fileList.find(fileName) != _dataThread->fileList.end();
+    } while(false);
+
+    pthread_mutex_unlock(&mutex);
+    
+    return ret;
+}
+
 unsigned char *ZipFile::getFileData(const std::string &fileName, unsigned long *pSize)
 {
     return getFileData(fileName, pSize, _data);

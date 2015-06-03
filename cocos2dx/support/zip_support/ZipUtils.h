@@ -206,6 +206,7 @@ namespace cocos2d
         * @since v2.0.5
         */
         bool fileExists(const std::string &fileName) const;
+        bool fileExistsAsync(const std::string &fileName) const;
 
         /**
         * Get resource file data from a zip file.
