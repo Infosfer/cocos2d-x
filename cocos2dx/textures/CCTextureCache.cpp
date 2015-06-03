@@ -1035,7 +1035,8 @@ void VolatileTexture::reloadAllTextures()
                     if (lastdot != std::string::npos) {
                         pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
                     }
-                    std::string pathAlpha = pathWithoutExtension + "-alpha.png";
+                    std::string pathAlpha = pathWithoutExtension + "-alpha.jpg";
+
                     if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
 
                         // Create Color Image
@@ -1043,18 +1044,19 @@ void VolatileTexture::reloadAllTextures()
                         std::string pathJpg = pathWithoutExtension + ".jpg";
                         unsigned long nSize = 0;
                         unsigned char* pBuffer = CCFileUtils::sharedFileUtils()->getFileData(pathJpg.c_str(), "rb", &nSize);
-                        pImageColor->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage);
+                        pImageColor->initWithImageData((void*)pBuffer, nSize, CCImage::kFmtJpg);
                         CC_SAFE_DELETE_ARRAY(pBuffer);
 
                         // Create Merge Image
                         CCImage* pImageAlpha = new CCImage();
                         nSize = 0;
                         pBuffer = CCFileUtils::sharedFileUtils()->getFileData(pathAlpha.c_str(), "rb", &nSize);
-                        pImageAlpha->initWithImageData((void*)pBuffer, nSize, vt->m_FmtImage);
+                        pImageAlpha->initWithImageData((void*)pBuffer, nSize, CCImage::kFmtJpg);
                         CC_SAFE_DELETE_ARRAY(pBuffer);
 
                         // Merge Alpha to Color
                         CCImage* pImage = CCTexture2D::mergeImageWithAlphaImage(pImageColor, pImageAlpha);
+                        pImage->setIsPremultipliedAlpha(true);
 
                         // Recreate Texture
                         CCTexture2DPixelFormat oldPixelFormat = CCTexture2D::defaultAlphaPixelFormat();
@@ -1063,9 +1065,8 @@ void VolatileTexture::reloadAllTextures()
                         CCTexture2D::setDefaultAlphaPixelFormat(oldPixelFormat);
 
                         CC_SAFE_RELEASE(pImage);
+                        CC_SAFE_RELEASE(pImageColor);
                         CC_SAFE_RELEASE(pImageAlpha);
-
-                        return;
                     }
                     else {
                         CCImage* pImage = new CCImage();
