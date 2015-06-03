@@ -30,6 +30,7 @@ THE SOFTWARE.
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "CCTextureETC.h"
+#include "platform/android/CCFileUtilsAndroid.h"
 #endif
 
 #include "ccMacros.h"
@@ -175,9 +176,12 @@ static void* loadImage(void* data)
             if (lastdot != std::string::npos) {
                 pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
             }
-            std::string pathAlpha = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + "-alpha.jpg").c_str());
-            if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
-                std::string pathJpg = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + ".jpg").c_str());
+            std::string pathAlpha = pathWithoutExtension + "-alpha.jpg";
+
+            CCFileUtilsAndroid *fileUitls = (CCFileUtilsAndroid*)CCFileUtils::sharedFileUtils();
+
+            if (fileUitls->isFileExistAsync(pathAlpha.c_str())) {
+                std::string pathJpg = pathWithoutExtension + ".jpg";
 
                 CCImage* imgColor = new CCImage();
                 imgColor->initWithImageFileThreadSafe(pathJpg.c_str(), CCImage::kFmtJpg);
@@ -349,6 +353,22 @@ void CCTextureCache::addImageAsync(const char *path, CCObject *target, SEL_CallF
         target->retain();
     }
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    if (strcmp(path, fullpath.c_str()) == 0) {
+        std::string pathWithoutExtension = pathKey;
+        size_t lastdot = pathWithoutExtension.find_last_of(".");
+        if (lastdot != std::string::npos) {
+            pathWithoutExtension = pathWithoutExtension.substr(0, lastdot);
+        }
+        std::string pathAlpha = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + "-alpha.jpg").c_str());
+        if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
+            fullpath = pathAlpha;
+            fullpath.replace(fullpath.find("-alpha.jpg"), 10, ".png");
+            CCFileUtils::sharedFileUtils()->insertFullPathCache(path, fullpath.c_str());
+        }
+    }
+#endif
+
     // generate async struct
     AsyncStruct *data = new AsyncStruct();
     data->filename = fullpath.c_str();
@@ -512,6 +532,10 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
                 std::string pathAlpha = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + "-alpha.jpg").c_str());
                 if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
                     std::string pathJpg = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + ".jpg").c_str());
+
+                    fullpath = pathJpg;
+                    fullpath.replace(fullpath.find(".jpg"), 4, ".png");
+                    CCFileUtils::sharedFileUtils()->insertFullPathCache(path, fullpath.c_str());
 
                     CCImage* imgColor = new CCImage();
                     imgColor->initWithImageFile(pathJpg.c_str(), CCImage::kFmtJpg);
