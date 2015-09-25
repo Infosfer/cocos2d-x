@@ -28,6 +28,7 @@
 
 #include <queue>
 #include <pthread.h>
+#include <openssl/err.h>
 #include <errno.h>
 
 #include "curl/curl.h"
