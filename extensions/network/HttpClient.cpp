@@ -380,7 +380,9 @@ public:
     {
         if (CURLE_OK != curl_easy_perform(m_curl))
             return false;
-        CURLcode code = curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, responseCode);
+		long tmpCode = 0;
+        CURLcode code = curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &tmpCode);
+		*responseCode = (int)tmpCode;
         if (code != CURLE_OK || *responseCode != 200)
             return false;
         
