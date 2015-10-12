@@ -1,19 +1,19 @@
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2012 greathqy
- 
+
  http://www.cocos2d-x.org
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -64,11 +64,11 @@ static size_t writeData(void *ptr, size_t size, size_t nmemb, void *stream)
 {
     std::vector<char> *recvBuffer = (std::vector<char>*)stream;
     size_t sizes = size * nmemb;
-    
+
     // add data to the end of recvBuffer
     // write data maybe called more than once in a single request
     recvBuffer->insert(recvBuffer->end(), (char*)ptr, (char*)ptr+sizes);
-    
+
     return sizes;
 }
 
@@ -77,11 +77,11 @@ static size_t writeHeaderData(void *ptr, size_t size, size_t nmemb, void *stream
 {
     std::vector<char> *recvBuffer = (std::vector<char>*)stream;
     size_t sizes = size * nmemb;
-    
+
     // add data to the end of recvBuffer
     // write data maybe called more than once in a single request
     recvBuffer->insert(recvBuffer->end(), (char*)ptr, (char*)ptr+sizes);
-    
+
     return sizes;
 }
 
@@ -95,44 +95,44 @@ static int processDeleteTask(CCHttpRequest *request, write_callback callback, vo
 
 // Worker thread
 static void* networkThread(void *data)
-{    
+{
     CCHttpRequest *request = NULL;
-    
-    while (true) 
+
+    while (true)
     {
         if (need_quit)
         {
             break;
         }
-        
+
         // step 1: send http request if the requestQueue isn't empty
         request = NULL;
-        
+
         pthread_mutex_lock(&s_requestQueueMutex); //Get request task from queue
         if (0 != s_requestQueue->count())
         {
             request = dynamic_cast<CCHttpRequest*>(s_requestQueue->objectAtIndex(0));
-            s_requestQueue->removeObjectAtIndex(0);  
+            s_requestQueue->removeObjectAtIndex(0);
             // request's refcount = 1 here
         }
         pthread_mutex_unlock(&s_requestQueueMutex);
-        
+
         if (NULL == request)
         {
         	// Wait for http request tasks from main thread
         	pthread_cond_wait(&s_SleepCondition, &s_SleepMutex);
             continue;
         }
-        
+
         // step 2: libcurl sync access
-        
+
         // Create a HttpResponse object, the default setting is http access failed
         CCHttpResponse *response = new CCHttpResponse(request);
-        
+
         // request's refcount = 2 here, it's retained by HttpRespose constructor
         request->release();
         // ok, refcount = 1 now, only HttpResponse hold it.
-        
+
         int32_t responseCode = -1;
         int retValue = 0;
 
@@ -141,17 +141,17 @@ static void* networkThread(void *data)
         {
             case CCHttpRequest::kHttpGet: // HTTP GET
                 retValue = processGetTask(request,
-                                          writeData, 
-                                          response->getResponseData(), 
+                                          writeData,
+                                          response->getResponseData(),
                                           &responseCode,
                                           writeHeaderData,
                                           response->getResponseHeader());
                 break;
-            
+
             case CCHttpRequest::kHttpPost: // HTTP POST
                 retValue = processPostTask(request,
-                                           writeData, 
-                                           response->getResponseData(), 
+                                           writeData,
+                                           response->getResponseData(),
                                            &responseCode,
                                            writeHeaderData,
                                            response->getResponseHeader());
@@ -174,16 +174,16 @@ static void* networkThread(void *data)
                                              writeHeaderData,
                                              response->getResponseHeader());
                 break;
-            
+
             default:
                 CCAssert(true, "CCHttpClient: unkown request type, only GET and POSt are supported");
                 break;
         }
-                
+
         // write data to HttpResponse
         response->setResponseCode(responseCode);
-        
-        if (retValue != 0) 
+
+        if (retValue != 0)
         {
             response->setSucceed(false);
             response->setErrorBuffer(s_errorBuffer);
@@ -193,27 +193,27 @@ static void* networkThread(void *data)
             response->setSucceed(true);
         }
 
-        
+
         // add response packet into queue
         pthread_mutex_lock(&s_responseQueueMutex);
         s_responseQueue->addObject(response);
         pthread_mutex_unlock(&s_responseQueueMutex);
-        
+
         // resume dispatcher selector
         CCDirector::sharedDirector()->getScheduler()->resumeTarget(CCHttpClient::getInstance());
     }
-    
+
     // cleanup: if worker thread received quit signal, clean up un-completed request queue
     pthread_mutex_lock(&s_requestQueueMutex);
     s_requestQueue->removeAllObjects();
     pthread_mutex_unlock(&s_requestQueueMutex);
     s_asyncRequestCount -= s_requestQueue->count();
-    
+
     if (s_requestQueue != NULL) {
-        
+
         pthread_mutex_destroy(&s_requestQueueMutex);
         pthread_mutex_destroy(&s_responseQueueMutex);
-        
+
         pthread_mutex_destroy(&s_SleepMutex);
         pthread_cond_destroy(&s_SleepCondition);
 
@@ -224,7 +224,7 @@ static void* networkThread(void *data)
     }
 
     pthread_exit(NULL);
-    
+
     return 0;
 }
 
@@ -246,21 +246,32 @@ static void locking_function(int mode, int n, const char * file, int line)
 		MUTEX_UNLOCK(mutex_buf[n]);
 }
 
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 static void id_function(CRYPTO_THREADID* threadid)
 {
 	CRYPTO_THREADID_set_numeric(threadid, (unsigned long)pthread_self());
 }
+#else
+static unsigned long id_function(void)
+{
+  return ((unsigned long)pthread_self());
+}
+#endif
 
 int thread_setup(void)
 {
 	int i;
- 
+
 	mutex_buf = (MUTEX_TYPE*)malloc(CRYPTO_num_locks(  ) * sizeof(MUTEX_TYPE));
 	if (!mutex_buf)
 		return 0;
 	for (i = 0;  i < CRYPTO_num_locks();  i++)
 		MUTEX_SETUP(mutex_buf[i]);
-	CRYPTO_THREADID_set_callback(id_function);
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
+    CRYPTO_THREADID_set_callback(id_function);
+#else
+    CRYPTO_set_id_callback(id_function);
+#endif
 	CRYPTO_set_locking_callback(locking_function);
 	return 1;
 }
@@ -268,10 +279,14 @@ int thread_setup(void)
 int thread_cleanup(void)
 {
 	int i;
- 
+
 	if (!mutex_buf)
 		return 0;
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
+    CRYPTO_THREADID_set_callback(NULL);
+#else
 	CRYPTO_set_id_callback(NULL);
+#endif
 	CRYPTO_set_locking_callback(NULL);
 	for (i = 0;  i < CRYPTO_num_locks(  );  i++)
 		MUTEX_CLEANUP(mutex_buf[i]);
@@ -288,7 +303,7 @@ static bool configureCURL(CURL *handle)
     if (!handle) {
         return false;
     }
-    
+
     int32_t code;
     code = curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, s_errorBuffer);
     if (code != CURLE_OK) {
@@ -298,12 +313,12 @@ static bool configureCURL(CURL *handle)
     if (code != CURLE_OK) {
         return false;
     }
-    
+
     code = curl_easy_setopt(handle, CURLOPT_NOSIGNAL, 1L);
     if (code != CURLE_OK) {
         return false;
     }
-    
+
     code = curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, CCHttpClient::getInstance()->getTimeoutForConnect());
     if (code != CURLE_OK) {
         return false;
@@ -372,7 +387,7 @@ public:
                 && setOption(CURLOPT_WRITEDATA, stream)
                 && setOption(CURLOPT_HEADERFUNCTION, headerCallback)
                 && setOption(CURLOPT_HEADERDATA, headerStream);
-        
+
     }
 
     /// @param responseCode Null not allowed
@@ -385,9 +400,9 @@ public:
 		*responseCode = (int)tmpCode;
         if (code != CURLE_OK || *responseCode != 200)
             return false;
-        
+
         // Get some mor data.
-        
+
         return true;
     }
 };
@@ -398,7 +413,7 @@ static int processGetTask(CCHttpRequest *request, write_callback callback, void 
     CURLRaii curl;
     bool ok = curl.init(request, callback, stream, headerCallback, headerStream)
         && curl.setOption(CURLOPT_FOLLOWLOCATION, true);
-    
+
     if (CCHttpClient::getInstance()->getCurlProxyIp() != NULL) {
         ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
         && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
@@ -416,12 +431,12 @@ static int processPostTask(CCHttpRequest *request, write_callback callback, void
             && curl.setOption(CURLOPT_POST, 1)
             && curl.setOption(CURLOPT_POSTFIELDS, request->getRequestData())
     && curl.setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize());
-    
+
     if (CCHttpClient::getInstance()->getCurlProxyIp() != NULL) {
         ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
         && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
     }
-    
+
     ok = ok && curl.perform(responseCode);
     return ok ? 0 : 1;
 }
@@ -434,12 +449,12 @@ static int processPutTask(CCHttpRequest *request, write_callback callback, void 
             && curl.setOption(CURLOPT_CUSTOMREQUEST, "PUT")
             && curl.setOption(CURLOPT_POSTFIELDS, request->getRequestData())
     && curl.setOption(CURLOPT_POSTFIELDSIZE, request->getRequestDataSize());
-    
+
     if (CCHttpClient::getInstance()->getCurlProxyIp() != NULL) {
         ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
         && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
     }
-    
+
     ok = ok && curl.perform(responseCode);
     return ok ? 0 : 1;
 }
@@ -456,7 +471,7 @@ static int processDeleteTask(CCHttpRequest *request, write_callback callback, vo
         ok = ok && curl.setOption(CURLOPT_PROXY, CCHttpClient::getInstance()->getCurlProxyIp()->getCString())
         && curl.setOption(CURLOPT_PROXYPORT, CCHttpClient::getInstance()->getCurlProxyPort());
     }
-    
+
     ok = ok && curl.perform(responseCode);
     return ok ? 0 : 1;
 }
@@ -467,7 +482,7 @@ CCHttpClient* CCHttpClient::getInstance()
     if (s_pHttpClient == NULL) {
         s_pHttpClient = new CCHttpClient();
     }
-    
+
     return s_pHttpClient;
 }
 
@@ -484,10 +499,10 @@ CCHttpClient::CCHttpClient()
 {
 
 	thread_setup();
-	
+
     _curlProxyIp = NULL;
     _curlProxyPort = -1;
-    
+
     CCDirector::sharedDirector()->getScheduler()->scheduleSelector(
                     schedule_selector(CCHttpClient::dispatchResponseCallbacks), this, 0, false);
     CCDirector::sharedDirector()->getScheduler()->pauseTarget(this);
@@ -496,13 +511,13 @@ CCHttpClient::CCHttpClient()
 CCHttpClient::~CCHttpClient()
 {
     need_quit = true;
-    
+
     if (s_requestQueue != NULL) {
     	pthread_cond_signal(&s_SleepCondition);
     }
-    
+
     s_pHttpClient = NULL;
-	
+
 	thread_cleanup();
 }
 
@@ -512,49 +527,49 @@ bool CCHttpClient::lazyInitThreadSemphore()
     if (s_requestQueue != NULL) {
         return true;
     } else {
-        
+
         s_requestQueue = new CCArray();
         s_requestQueue->init();
-        
+
         s_responseQueue = new CCArray();
         s_responseQueue->init();
-        
+
         pthread_mutex_init(&s_requestQueueMutex, NULL);
         pthread_mutex_init(&s_responseQueueMutex, NULL);
-        
+
         pthread_mutex_init(&s_SleepMutex, NULL);
         pthread_cond_init(&s_SleepCondition, NULL);
 
         pthread_create(&s_networkThread, NULL, networkThread, NULL);
         pthread_detach(s_networkThread);
-        
+
         need_quit = false;
     }
-    
+
     return true;
 }
 
 //Add a get task to queue
 void CCHttpClient::send(CCHttpRequest* request)
-{    
-    if (false == lazyInitThreadSemphore()) 
+{
+    if (false == lazyInitThreadSemphore())
     {
         return;
     }
-    
+
     if (!request)
     {
         return;
     }
-        
+
     ++s_asyncRequestCount;
-    
+
     request->retain();
-        
+
     pthread_mutex_lock(&s_requestQueueMutex);
     s_requestQueue->addObject(request);
     pthread_mutex_unlock(&s_requestQueueMutex);
-    
+
     // Notify thread start to work
     pthread_cond_signal(&s_SleepCondition);
 }
@@ -563,9 +578,9 @@ void CCHttpClient::send(CCHttpRequest* request)
 void CCHttpClient::dispatchResponseCallbacks(float delta)
 {
     // CCLog("CCHttpClient::dispatchResponseCallbacks is running");
-    
+
     CCHttpResponse* response = NULL;
-    
+
     pthread_mutex_lock(&s_responseQueueMutex);
     if (s_responseQueue->count())
     {
@@ -573,28 +588,28 @@ void CCHttpClient::dispatchResponseCallbacks(float delta)
         s_responseQueue->removeObjectAtIndex(0);
     }
     pthread_mutex_unlock(&s_responseQueueMutex);
-    
+
     if (response)
     {
         --s_asyncRequestCount;
-        
+
         CCHttpRequest *request = response->getHttpRequest();
         CCObject *pTarget = request->getTarget();
         SEL_HttpResponse pSelector = request->getSelector();
 
-        if (pTarget && pSelector) 
+        if (pTarget && pSelector)
         {
             (pTarget->*pSelector)(this, response);
         }
-        
+
         response->release();
     }
-    
-    if (0 == s_asyncRequestCount) 
+
+    if (0 == s_asyncRequestCount)
     {
         CCDirector::sharedDirector()->getScheduler()->pauseTarget(this);
     }
-    
+
 }
 
 NS_CC_EXT_END
