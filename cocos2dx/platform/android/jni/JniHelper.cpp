@@ -87,11 +87,11 @@ extern "C"
 
     static bool getEnv(JNIEnv **env) {
         bool bRet = getEnv_G900F(env);
-        if ((*env)->ExceptionOccurred()) { (*env)->ExceptionClear(); }
+        if ((*env)->ExceptionCheck()) { (*env)->ExceptionClear(); }
 
         if (!bRet) {
             bRet = getEnv_Standard(env);
-            if ((*env)->ExceptionOccurred()) { (*env)->ExceptionClear(); }
+            if ((*env)->ExceptionCheck()) { (*env)->ExceptionClear(); }
         }
 
         return bRet;
@@ -104,7 +104,19 @@ extern "C"
     	   }
 	    }
 
-    	return static_cast<jclass>(env->CallObjectMethod(cocos2d::JniHelper::getJavaVMClassLoader(), cocos2d::JniHelper::getJavaVMFindClassMethod(), env->NewStringUTF(className)));
+        jstring _jstrClassName = env->NewStringUTF(className);
+        jclass _clazz = (jclass) env->CallObjectMethod(cocos2d::JniHelper::getJavaVMClassLoader(),
+                                                       cocos2d::JniHelper::getJavaVMFindClassMethod(),
+                                                       _jstrClassName);
+
+        if (_clazz == NULL) {
+            LOGD("Classloader failed to find class of %s", className);
+            env->ExceptionClear();
+        }
+
+        env->DeleteLocalRef(_jstrClassName);
+            
+        return _clazz;
     }
 
     static jclass getClassID_G900F_(const char *className, JNIEnv *env)
@@ -126,6 +138,7 @@ extern "C"
             if (! ret)
             {
                  LOGD("Failed to find class of %s", className);
+                pEnv->ExceptionClear();
                 break;
             }
         } while (0);
@@ -135,11 +148,11 @@ extern "C"
 
     static jclass getClassID_(const char *className, JNIEnv *env) {
         jclass cls = getClassID_G900F_(className, env);
-        if (env->ExceptionOccurred()) { env->ExceptionClear(); }
+        if (env->ExceptionCheck()) { env->ExceptionClear(); }
 
         if (!cls) {
             cls = getClassID_Standard_(className, env);
-            if (env->ExceptionOccurred()) { env->ExceptionClear(); }
+            if (env->ExceptionCheck()) { env->ExceptionClear(); }
         }
 
         return cls;
@@ -164,6 +177,7 @@ extern "C"
             if (! methodID)
             {
                 LOGD("Failed to find static method id of %s", methodName);
+                pEnv->ExceptionClear();
                 break;
             }
 
@@ -196,6 +210,7 @@ extern "C"
             if (! methodID)
             {
                 LOGD("Failed to find method id of %s", methodName);
+                pEnv->ExceptionClear();
                 break;
             }
 
