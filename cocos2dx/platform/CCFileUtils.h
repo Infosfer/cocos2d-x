@@ -102,6 +102,10 @@ public:
      */
     virtual unsigned char* getFileDataFromZip(const char* pszZipFilePath, const char* pszFileName, unsigned long * pSize);
 
+    bool createDirectory(const char *path);
+    void copyFile(const char* source, const char* dest);
+    bool uncompressZipFile(const char* pszZipFilePath);
+
     
     /** Returns the fullpath for a given filename.
      
