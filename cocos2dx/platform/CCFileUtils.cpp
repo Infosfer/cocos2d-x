@@ -578,6 +578,13 @@ void CCFileUtils::copyFile(const char* srcPath, const char* dstPath) {
     dst.close();
 }
 
+int CCFileUtils::removeFile(const char* path) {
+    if (isFileExist(path)) {
+        return remove(path);
+    }
+    return -1;
+}
+
 #define BUFFER_SIZE 8192
 #define MAX_FILENAME 512
 
