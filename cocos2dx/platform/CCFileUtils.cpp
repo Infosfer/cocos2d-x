@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include <sys/stat.h>
 #include <errno.h>
 #include <stack>
+#include <dirent.h>
 
 using namespace std;
 
@@ -566,6 +567,20 @@ bool CCFileUtils::createDirectory(const char* path) {
     }
 
     return true;
+}
+
+void CCFileUtils::removeFilesInDirectory(const char* path) {
+    // These are data types defined in the "dirent" header
+    DIR *theFolder = opendir(path);
+    struct dirent *next_file;
+    char filepath[256];
+
+    while ((next_file = readdir(theFolder)) != NULL) {
+        // build the path for each file in the folder
+        sprintf(filepath, "%s/%s", path, next_file->d_name);
+        remove(filepath);
+    }
+    closedir(theFolder);
 }
 
 void CCFileUtils::copyFile(const char* srcPath, const char* dstPath) {

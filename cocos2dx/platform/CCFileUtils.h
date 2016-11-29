@@ -103,6 +103,7 @@ public:
     virtual unsigned char* getFileDataFromZip(const char* pszZipFilePath, const char* pszFileName, unsigned long * pSize);
 
     bool createDirectory(const char *path);
+    void removeFilesInDirectory(const char* path);
     void copyFile(const char* source, const char* dest);
     int removeFile(const char* path);
     bool uncompressZipFile(const char* pszZipFilePath);
