@@ -583,14 +583,19 @@ void CCFileUtils::removeFilesInDirectory(const char* path) {
     closedir(theFolder);
 }
 
-void CCFileUtils::copyFile(const char* srcPath, const char* dstPath) {
-    std::ifstream src(srcPath, std::ios::binary);
-    std::ofstream dst(dstPath, std::ios::binary);
+bool CCFileUtils::copyFile(const char* srcPath, const char* dstPath) {
+    try {
+        std::ifstream src(srcPath, std::ios::binary);
+        std::ofstream dst(dstPath, std::ios::binary);
 
-    dst << src.rdbuf();
+        dst << src.rdbuf();
 
-    src.close();
-    dst.close();
+        src.close();
+        dst.close();
+        return true;
+    } catch (...) {
+        return false;
+    }
 }
 
 int CCFileUtils::removeFile(const char* path) {

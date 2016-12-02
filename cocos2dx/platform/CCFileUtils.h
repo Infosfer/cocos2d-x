@@ -104,7 +104,7 @@ public:
 
     bool createDirectory(const char *path);
     void removeFilesInDirectory(const char* path);
-    void copyFile(const char* source, const char* dest);
+    bool copyFile(const char* source, const char* dest);
     int removeFile(const char* path);
     bool uncompressZipFile(const char* pszZipFilePath);
 
