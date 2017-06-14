@@ -111,8 +111,16 @@ static void* networkThread(void *data)
         pthread_mutex_lock(&s_requestQueueMutex); //Get request task from queue
         if (0 != s_requestQueue->count())
         {
-            request = dynamic_cast<CCHttpRequest*>(s_requestQueue->objectAtIndex(0));
-            s_requestQueue->removeObjectAtIndex(0);
+            int removeIndex = -1;
+            for (int i = 0; i < s_requestQueue->count(); i++) {
+                CCHttpRequest* r = dynamic_cast<CCHttpRequest*>(s_requestQueue->objectAtIndex(i));
+                if (request == NULL || r->getPriority() > request->getPriority()) {
+                    request = r;
+                    removeIndex = i;
+                }
+            }
+
+            s_requestQueue->removeObjectAtIndex(removeIndex);
             // request's refcount = 1 here
         }
         pthread_mutex_unlock(&s_requestQueueMutex);

@@ -69,6 +69,7 @@ public:
         _pTarget = NULL;
         _pSelector = NULL;
         _pUserData = NULL;
+        _priority = 0;
     };
     
     /** Destructor */
@@ -215,6 +216,16 @@ public:
    		return _headers;
    	}
 
+    inline void setPriority(int priority)
+    {
+        _priority = priority;
+    };
+
+    inline int getPriority()
+    {
+        return _priority;
+    };
+
 
 protected:
     // properties
@@ -226,6 +237,7 @@ protected:
     SEL_HttpResponse            _pSelector;      /// callback function, e.g. MyLayer::onHttpResponse(CCHttpClient *sender, CCHttpResponse * response)
     void*                       _pUserData;      /// You can add your customed data here 
     std::vector<std::string>    _headers;		      /// custom http headers
+    int                         _priority;
 };
 
 NS_CC_EXT_END
