@@ -235,6 +235,10 @@ CCObject* CCBAnimationManager::getBaseValue(CCNode *pNode, const char* pPropName
 
 int CCBAnimationManager::getSequenceId(const char* pSequenceName)
 {
+    if (pSequenceName == NULL) {
+        return -1;
+    }
+
     CCObject *pElement = NULL;
     string seqName(pSequenceName);
     CCARRAY_FOREACH(mSequences, pElement)
