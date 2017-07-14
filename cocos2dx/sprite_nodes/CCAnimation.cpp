@@ -205,6 +205,14 @@ float CCAnimation::getDuration(void)
     return m_fTotalDelayUnits * m_fDelayPerUnit;
 }
 
+bool CCAnimation::getRestoreOriginalFrame() const {
+    return m_bRestoreOriginalFrame;
+}
+
+void CCAnimation::setRestoreOriginalFrame(bool value) {
+    m_bRestoreOriginalFrame = value;
+}
+
 CCObject* CCAnimation::copyWithZone(CCZone* pZone)
 {
     CCZone* pNewZone = NULL;

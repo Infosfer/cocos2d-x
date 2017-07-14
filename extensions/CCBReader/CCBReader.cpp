@@ -1083,6 +1083,14 @@ void CCBReader::addOwnerOutletNode(CCNode *node)
     mOwnerOutletNodes->addObject(node);
 }
 
+bool CCBReader::getConvertRootToSprite() const {
+    return _convertRootToSprite;
+}
+
+void CCBReader::setConvertRootToSprite(bool value) {
+    _convertRootToSprite = value;
+}
+
 /************************************************************************
  Static functions
  ************************************************************************/

@@ -200,9 +200,13 @@ private:
     std::string mCCBRootPath;
     bool hasScriptingOwner;    
     bool init();
-public:
 
-    CC_SYNTHESIZE(bool, _convertRootToSprite, ConvertRootToSprite);
+protected:
+    bool _convertRootToSprite;
+
+public:
+    bool getConvertRootToSprite() const;
+    void setConvertRootToSprite(bool value);
     
     bool jsControlled;
     CCBReader(CCNodeLoaderLibrary *pCCNodeLoaderLibrary, CCBMemberVariableAssigner *pCCBMemberVariableAssigner = NULL, CCBSelectorResolver *pCCBSelectorResolver = NULL, CCNodeLoaderListener *pCCNodeLoaderListener = NULL);

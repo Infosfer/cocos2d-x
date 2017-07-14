@@ -136,6 +136,9 @@ public:
     */
     bool initWithAnimationFrames(CCArray* arrayOfAnimationFrames, float delayPerUnit, unsigned int loops);
 
+    bool getRestoreOriginalFrame() const;
+    void setRestoreOriginalFrame(bool value);
+
     virtual CCObject* copyWithZone(CCZone* pZone);
 
     /** total Delay units of the CCAnimation. */
@@ -150,11 +153,12 @@ public:
     /** array of CCAnimationFrames */
     CC_SYNTHESIZE_RETAIN(CCArray*, m_pFrames, Frames)
 
-    /** whether or not it shall restore the original frame when the animation finishes */
-    CC_SYNTHESIZE(bool, m_bRestoreOriginalFrame, RestoreOriginalFrame)
-
     /** how many times the animation is going to loop. 0 means animation is not animated. 1, animation is executed one time, ... */
     CC_SYNTHESIZE(unsigned int, m_uLoops, Loops)
+
+protected:
+    /** whether or not it shall restore the original frame when the animation finishes */
+    bool m_bRestoreOriginalFrame;
 };
 
 // end of sprite_nodes group
