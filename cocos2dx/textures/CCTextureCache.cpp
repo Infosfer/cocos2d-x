@@ -533,8 +533,8 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
                 if (CCFileUtils::sharedFileUtils()->isFileExist(pathAlpha.c_str())) {
                     std::string pathJpg = CCFileUtils::sharedFileUtils()->fullPathForFilename((pathWithoutExtension + ".jpg").c_str());
 
-                    fullpath = pathJpg;
-                    fullpath.replace(fullpath.find(".jpg"), 4, ".png");
+                    fullpath = pathAlpha;
+                    fullpath.replace(fullpath.find("-alpha.jpg"), 10, ".png");
                     CCFileUtils::sharedFileUtils()->insertFullPathCache(path, fullpath.c_str());
 
                     CCImage* imgColor = new CCImage();
@@ -568,7 +568,7 @@ CCTexture2D * CCTextureCache::addImage(const char * path)
                     // cache the texture file name
                     VolatileTexture::addImageTexture(texture, fullpath.c_str(), eImageFormat);
 #endif
-                    m_pTextures->setObject(texture, pathKey.c_str());
+                    m_pTextures->setObject(texture, fullpath.c_str());
                     texture->release();
                 }
                 else
